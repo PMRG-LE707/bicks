@@ -88,10 +88,10 @@ class BulkEigenStates:
         kb = -i * 2 * np.pi - kxa[0] - qa
         kc = -i * 2 * np.pi + kxa[1] - qa
         kd = -i * 2 * np.pi - kxa[1] - qa
-        Aa = -1j * self.a0 / ka * (np.exp(1j*(1-fr)*ka) - 1)
-        Ab = -1j * self.b0 / kb * (np.exp(1j*(1-fr)*kb) - 1)
-        Ac = -1j * self.c0 / kc * (np.exp(1j * kc) - np.exp(1j * (1-fr) * kc)) * np.exp(-1j * kxa[1] * (1 - fr))
-        Ad = -1j * self.d0 / kd * (np.exp(1j * kd) - np.exp(1j * (1-fr) * kd)) * np.exp(1j * kxa[1] * (1 - fr))
+        Aa = -1j * self.a0 / ka * (np.exp(1j * (1 - fr) * ka) - 1)
+        Ab = -1j * self.b0 / kb * (np.exp(1j * (1 - fr) * kb) - 1)
+        Ac = -1j * self.c0 / kc * (np.exp(1j * kc) - np.exp(1j * (1 - fr) * kc)) * np.exp(-1j * kxa[1] * (1 - fr))
+        Ad = -1j * self.d0 / kd * (np.exp(1j * kd) - np.exp(1j * (1 - fr) * kd)) * np.exp(1j * kxa[1] * (1 - fr))
         A = Aa + Ab + Ac + Ad
         B = kxa[0] / mu[0] * (Aa - Ab) + kxa[1]  / mu[1] * (Ac - Ad)
         C = 1 / mu[0] * (Aa + Ab) + 1 / mu[1] * (Ac + Ad)
@@ -103,76 +103,49 @@ class BulkEigenStates:
     
 
 class TotalFieldInPhcS:
-    def __init__(self, coefs, kza, eigenstates, kya=0):
-        self.es = eigenstates
+    def __init__(self, fields, coefs):
+        self.fields = fields
         self.coefs = coefs
-        self.kya = kya
-        self.kza = kza
         
     def Ex(self, x, z):
-        ess = self.es
+        
+        fields = self.fields
         coefs = self.coefs
-        qa = ess[0].qa
-        kya = self.kya
-        kza = self.kza
         sumEx = 0
-        for i in range(len(ess)):
-            es = ess[i]
-            coef = coefs[i]
-            if es.mode == "E":
-                return sumEx 
-            else:
-                sumEx = sumEx - coef * es.v(x) * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / es.k0a
-        return sumEx * np.exp(1j * qa * x)
+        for i in range(len(fields)):
+            field = coefs[i] * fields[i].Ex(x, z)
+            sumEx = sumEx + field
+        return sumEx
     
     def Ey(self, x, z):
-        ess = self.es
-        coefs = self.coef
-        qa = ess[0].qa
-        kya = self.kya
-        kza = self.kza
+        
+        fields = self.fields
+        coefs = self.coefs
         sumEy = 0
-        for i in range(len(ess)):
-            es = ess[i]
-            coef = coefs[i]
-            if es.mode == "E":
-                sumEy = sumEy + coef * es.u(x) * np.exp(1j * kza * z)
-            else:
-                sumEy = sumEy + coef * es.w(x) * np.exp(1j * kza * z) * kya / (es.k0a * kza)
-        return sumEy * np.exp(1j * qa * x)
+        for i in range(len(fields)):
+            field = coefs[i] * fields[i].Ey(x, z)
+            sumEy = sumEy + field
+        return sumEy
         
     def Hx(self, x, z):
-        ess = self.es
-        coefs = self.coef
-        qa = ess[0].qa
-        kya = self.kya
-        kza = self.kza
+        
+        fields = self.fields
+        coefs = self.coefs
         sumHx = 0
-        for i in range(len(ess)):
-            es = ess[i]
-            coef = coefs[i]
-            if es.mode == "H":
-                return sumHx
-            else:
-                sumHx = sumHx - coef * es.v(x) * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / es.k0a
-        return sumHx * np.exp(1j * qa * x)
+        for i in range(len(fields)):
+            field = coefs[i] * fields[i].Hx(x, z)
+            sumHx = sumHx + field
+        return sumHx
     
-       
     def Hy(self, x, z):
-        ess = self.es
-        coefs = self.coef
-        qa = ess[0].qa
-        kya = self.kya
-        kza = self.kza
+        
+        fields = self.fields
+        coefs = self.coefs
         sumHy = 0
-        for i in range(len(ess)):
-            es = ess[i]
-            coef = coefs[i]
-            if es.mode == "H":
-                sumHy = sumHy + coef * es.u(x) * np.exp(1j * kza * z)
-            else:
-                sumHy = sumHy + coef * es.w(x) * np.exp(1j * kza * z) * kya / (es.k0a * kza)
-        return sumHy * np.exp(1j * qa * x)
+        for i in range(len(fields)):
+            field = coefs[i] * fields[i].Hy(x, z)
+            sumHy = sumHy + field
+        return sumHy
   
     def zenergy_flow(self, z, n_x=1000, max_x=1):
         """
@@ -362,3 +335,88 @@ class FieldInPhcS:
          )
         plt.show()
         return
+    
+class FiledsInAir:
+    def __init__(self, tx, ty, nne, npo, qa, k0a, kya):
+        self.tx = tx
+        self.ty = ty
+        self.nne = nne
+        self.npo = npo
+        self.qa = qa
+        self.k0a = k0a
+        self.kya = kya
+        
+    def Ex(self, x, z):
+        tx = self.tx
+        nne = self.nne
+        npo = self.npo
+        qa = self.qa
+        k0a = self.k0a
+        kya = self.kya
+        sumEx = 0
+        for i in range(-nne, npo + 1):
+            kxai = i * 2 * np.pi + qa
+            kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
+            if i != 0:
+                expz = np.exp(1j * kzaouti * z)
+                expx = np.exp(1j * kxai * x)
+                sumEx = sumEx + tx[i] * expz * expx
+        return sumEx
+    
+    def Ey(self, x, z):
+        ty = self.ty
+        nne = self.nne
+        npo = self.npo
+        qa = self.qa
+        k0a = self.k0a
+        kya = self.kya
+        sumEy = 0
+        for i in range(-nne, npo + 1):
+            kxai = i * 2 * np.pi + qa
+            kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
+            if i != 0:
+                expz = np.exp(1j * kzaouti * z)
+                expx = np.exp(1j * kxai * x)
+                sumEy = sumEy + ty[i] * expz * expx
+        return sumEy
+    
+    def Hx(self, x, z):
+        tx = self.tx
+        ty = self.ty
+        nne = self.nne
+        npo = self.npo
+        qa = self.qa
+        k0a = self.k0a
+        kya = self.kya
+        sumHx = 0
+        for i in range(-nne, npo + 1):
+            kxai = i * 2 * np.pi + qa
+            kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
+            if i != 0:
+                expz = np.exp(1j * kzaouti * z)
+                expx = np.exp(1j * kxai * x)
+                sumHx = sumHx - (tx[i] * kxai * kya / kzaouti + 
+                                 ty[i] * (kya ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+        return sumHx
+    
+    def Hy(self, x, z):
+        tx = self.tx
+        ty = self.ty
+        nne = self.nne
+        npo = self.npo
+        qa = self.qa
+        k0a = self.k0a
+        kya = self.kya
+        sumHy = 0
+        for i in range(-nne, npo + 1):
+            kxai = i * 2 * np.pi + qa
+            kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
+            if i != 0:
+                expz = np.exp(1j * kzaouti * z)
+                expx = np.exp(1j * kxai * x)
+                sumHy = sumHy - (ty[i] * kxai * kya / kzaouti + 
+                                 tx[i] * (kxai ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+        return sumHy
+        
+        
+   
