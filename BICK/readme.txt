@@ -29,3 +29,4 @@ It's the first time to use git for me.
 And it's my first time to use nano to edit this file.
 Happy
 BAD
+I like gitting
