@@ -64,3 +64,5 @@ for field in fields:
 totalfieldinPhC = TotalFieldInPhcS(totalfield, coefs)
 
 totalfieldinair = FiledsInAir(tx, ty, nne, npo, qa, k0a, kya)
+print(totalfieldinair.Ex(0.1, h/2))
+print(totalfieldinPhC.Ex(0.1, h/2))

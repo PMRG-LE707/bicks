@@ -354,13 +354,15 @@ class FiledsInAir:
         k0a = self.k0a
         kya = self.kya
         sumEx = 0
+        k = 0
         for i in range(-nne, npo + 1):
             kxai = i * 2 * np.pi + qa
             kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
             if i != 0:
                 expz = np.exp(1j * kzaouti * z)
                 expx = np.exp(1j * kxai * x)
-                sumEx = sumEx + tx[i] * expz * expx
+                sumEx = sumEx + tx[k] * expz * expx
+                k = k + 1
         return sumEx
     
     def Ey(self, x, z):
@@ -371,13 +373,15 @@ class FiledsInAir:
         k0a = self.k0a
         kya = self.kya
         sumEy = 0
+        k = 0
         for i in range(-nne, npo + 1):
             kxai = i * 2 * np.pi + qa
             kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
             if i != 0:
                 expz = np.exp(1j * kzaouti * z)
                 expx = np.exp(1j * kxai * x)
-                sumEy = sumEy + ty[i] * expz * expx
+                sumEy = sumEy + ty[k] * expz * expx
+                k = k + 1
         return sumEy
     
     def Hx(self, x, z):
@@ -389,14 +393,16 @@ class FiledsInAir:
         k0a = self.k0a
         kya = self.kya
         sumHx = 0
+        k = 0
         for i in range(-nne, npo + 1):
             kxai = i * 2 * np.pi + qa
             kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
             if i != 0:
                 expz = np.exp(1j * kzaouti * z)
                 expx = np.exp(1j * kxai * x)
-                sumHx = sumHx - (tx[i] * kxai * kya / kzaouti + 
-                                 ty[i] * (kya ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+                sumHx = sumHx - (tx[k] * kxai * kya / kzaouti + 
+                                 ty[k] * (kya ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+                k = k + 1
         return sumHx
     
     def Hy(self, x, z):
@@ -408,14 +414,16 @@ class FiledsInAir:
         k0a = self.k0a
         kya = self.kya
         sumHy = 0
+        k = 0
         for i in range(-nne, npo + 1):
             kxai = i * 2 * np.pi + qa
             kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
             if i != 0:
                 expz = np.exp(1j * kzaouti * z)
                 expx = np.exp(1j * kxai * x)
-                sumHy = sumHy - (ty[i] * kxai * kya / kzaouti + 
-                                 tx[i] * (kxai ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+                sumHy = sumHy + (ty[k] * kxai * kya / kzaouti + 
+                                 tx[k] * (kxai ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+                k = k + 1
         return sumHy
         
         
