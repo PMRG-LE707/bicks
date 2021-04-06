@@ -161,6 +161,74 @@ class TotalFieldInPhcS:
             Sz = np.real(self.Ex(x, z) * np.conj(self.Hy(x, z)) - self.Ey(x, z) * np.conj(self.Hx(x, z)))
             EF = EF + Sz * delta_x
             return EF
+        
+    
+    def show(self, fieldcomponent, oprator, Nx=20):
+        """
+        unit in period a
+        """
+        if self.fields[0].mode == "E":
+            ep = self.fields[0].es.phcs.ep
+        else:
+            ep = -self.fields[0].es.phcs.mu
+        a = self.fields[0].es.phcs.a
+        hight = self.fields[0].es.phcs.h / a
+        fr = self.fields[0].es.phcs.fr
+        width1 = (1 - fr)
+        width2 = fr
+        font = {'family': 'Times New Roman', 'weight': 'normal', 'size': 14}
+        fig, ax1 = plt.subplots()
+        ax1.set_xlabel('x (a)', font)
+        ax1.set_ylabel('z (a)', font)
+        ax1.set_title(oprator + " $" + fieldcomponent[0] + 
+                      "_{" + fieldcomponent[1]+ "}$ in one period" + 
+                      "(total field)", font)
+        ax1.set_xlim([-0.5, 1.5])
+        ax1.set_ylim([-hight * 0.6, hight])
+        
+        Nz = int(hight * Nx)
+        xx = np.arange(0, 2 * Nx + 1) * (1 / (2 * Nx))
+        zz = np.arange(-Nz, Nz + 1) * (1 / (2 * Nx))
+        oprator = eval("np." + oprator)
+        fieldcomponent = eval("self." + fieldcomponent)
+        value = oprator(np.array([[fieldcomponent(x, z) for x in xx] for z in zz]))
+        
+        profile = ax1.imshow(value, cmap='RdBu', 
+                         interpolation='none', 
+                         extent=[0, 1, hight * 0.5, -hight * 0.5])
+        
+        fig.colorbar(profile, extend='both')
+        ax1.plot([1 - fr, 1 - fr], [-hight / 2, hight / 2], color="Black", linestyle='dashed') 
+        
+        # plot the arrow and delectric constants
+        txtname = ['$\epsilon_{1} = ' + str(ep[0]) + '$',
+                   '$\epsilon_{2} = ' + str(ep[1]) + '$']
+        ax1.annotate(txtname[0],
+            xy=(width1/2, hight / 2 * 0.9), xycoords='data',
+            xytext=(0.1, 0.82), textcoords='axes fraction',
+            bbox=dict(boxstyle="round4", fc="maroon", alpha=0.3),
+            arrowprops=dict(arrowstyle="fancy",
+                                  connectionstyle="arc3,rad=0.2",
+                                  fc="maroon", alpha=0.3))
+        ax1.annotate(txtname[1],
+            xy=(width1 + width2 / 2, hight / 2 * 0.9), xycoords='data',
+            xytext=(0.7, 0.82), textcoords='axes fraction',
+            bbox=dict(boxstyle="round4",  fc="blue", alpha=0.3),
+            arrowprops=dict(arrowstyle="fancy",
+                                  connectionstyle="arc3,rad=-0.2",
+                                  fc="blue", alpha=0.3))
+        txtname = "Field number: " + str(len(self.fields))
+        ax1.text(0.5, 0.9 * hight, 
+                 txtname, 
+                 size=10,
+         ha="center", va="center",
+         bbox=dict(boxstyle="round",
+                   ec=(1., 0.5, 0.5),
+                   fc=(1., 0.8, 0.8),
+                   )
+         )
+        plt.show()
+        plt.show()
 
 class FieldInPhcS:
     def __init__(self, eigenstate, kya=0, kzdirection=1):    
@@ -286,11 +354,9 @@ class FieldInPhcS:
         Nz = int(hight * Nx)
         xx = np.arange(0, 2 * Nx + 1) * (1 / (2 * Nx))
         zz = np.arange(-Nz, Nz + 1) * (1 / (2 * Nx))
-        print(xx)
         oprator = eval("np." + oprator)
         fieldcomponent = eval("self." + fieldcomponent)
         value = oprator(np.array([[fieldcomponent(x, z) for x in xx] for z in zz]))
-        print(oprator(fieldcomponent(0.6, -0.4)))
         
         profile = ax1.imshow(value, cmap='RdBu', 
                          interpolation='none', 

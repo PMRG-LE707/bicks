@@ -3,6 +3,10 @@ from BoundryConditionWithcTIR import getcoefficents
 from PhotonicCrystalSlab import PhotonicCrystalSlab
 from eigenkpar import find_eigen_kpar
 from Field import BulkEigenStates, FieldInPhcS, TotalFieldInPhcS, FiledsInAir
+import matplotlib.pyplot as plt
+import time
+import multiprocessing
+
 
 
 # properties of PhC slab
@@ -12,20 +16,29 @@ fr = 0.5
 ep = [1.0, 4.9]
 phcs = PhotonicCrystalSlab(h, ep, fr, a)
 
+
 # properties of wavenumber
-k0a = 0.6047 * 2 * np.pi
-qa = 0.0
-kya = 0.212 * 2 * np.pi
+k0a = 0.46092 * 2 * np.pi
+qa = 0.3156 * 2 * np.pi
+kya = 0.0 * 2 * np.pi
 
-nne = 2
-npo = 2
+nne = 3
+npo = 3
 nd = nne + npo + 1
-nEmode = nd
-nHmode = nd - 1
+nr = 1
+npr = 2
+nEmode = nd + nr - npr + 1
+nHmode = 0
 
-Ek_real_parallel, Ek_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+if nEmode == 0:
+    Ek_real_parallel, Ek_imag_parallel = [], []
+else:
+    Ek_real_parallel, Ek_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
                                                      nEmode, mode="E")
-Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+if nHmode == 0:
+    Hk_real_parallel, Hk_imag_parallel = [], []
+else:
+    Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
                                                      nHmode, mode="H")
 
 E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
@@ -56,13 +69,14 @@ imag_fields_downward = [FieldInPhcS(eigenstate, kya=kya, kzdirection=-1)
 
 fields = [real_fields_upward, real_fields_downward, 
           imag_fields_upward, imag_fields_downward]
-coefs, tx, ty = getcoefficents(fields, nne, npo)
+def main(i):
+    coefs = getcoefficents(fields, nne, npo)
+    return i
 
-totalfield = []
-for field in fields:
-    totalfield.extend(field)
-totalfieldinPhC = TotalFieldInPhcS(totalfield, coefs)
-
-totalfieldinair = FiledsInAir(tx, ty, nne, npo, qa, k0a, kya)
-print(totalfieldinair.Ex(0.1, h/2))
-print(totalfieldinPhC.Ex(0.1, h/2))
+t1 = time.time()
+data = range(100)
+pool = multiprocessing.Pool(processes=2)
+r = pool.map(main, data)
+pool.close()
+t2 = time.time()
+print((t2-t1) * 250 / 60)
