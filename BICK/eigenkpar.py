@@ -5,10 +5,10 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     """
     The eigenstates of the 1D photonic crystal.
 
-    :param phcs: the Photonic Crystal Slab which is a kind of class.
-    :param q: the Bloch wave number
-    :param k0: the frequency divided by (2pi*c)
-    :param nimag: the number of considered evanescent modes
+    :phcs: the Photonic Crystal Slab which is a kind of class.
+    :q: the Bloch wave number
+    :k0: the frequency divided by (2pi*c)
+    :nimag: the number of considered evanescent modes
     :return: The Fourier coefficients of every Bloch waves' kz in PhC(all_kza)
     """
 
