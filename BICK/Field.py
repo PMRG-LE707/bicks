@@ -2,7 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-
+from BoundryConditionWithcTIR import getcoefficents
+from eigenkpar import find_eigen_kpar
 
 class BulkEigenStates:
     """
@@ -491,6 +492,96 @@ class FiledsInAir:
                                  tx[k] * (kxai ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
                 k = k + 1
         return sumHy
+        
+class FieldsWithCTIR:
+    
+    def __init__(self, phcs, k0a, qa, kya):
+        self.phcs = phcs
+        self.k0a = k0a
+        self.qa = qa
+        self.kya = kya
+        n_radiation = 1
+        if n_radiation <= 3:
+            nd = 3
+        else:
+            nd = n_radiation + (n_radiation + 1) % 2
+        nne = nd // 2
+        npo = nd // 2
+        nEmode = nd + 1
+        nHmode = nd + 1
+        delnumber = 2
+        if nEmode == 0:
+            Ek_real_parallel, Ek_imag_parallel = [], []
+        else:
+            Ek_real_parallel, Ek_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+                                                             nEmode, mode="E")
+        if nHmode == 0:
+            Hk_real_parallel, Hk_imag_parallel = [], []
+        else:
+            Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+                                                             nHmode, mode="H")
+        
+        Ek_real_parallel = np.delete(Ek_real_parallel,
+                                     1, axis=0)
+        
+        
+        
+        E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_real_parallel]
+        E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_imag_parallel]
+        
+        H_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_real_parallel]
+        H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_imag_parallel]
+        
+        real_eigenstates = E_real_eigenstates * 1
+        real_eigenstates.extend(H_real_eigenstates)
+        
+        imag_eigenstates = E_imag_eigenstates * 1
+        imag_eigenstates.extend(H_imag_eigenstates)
+        
+        imag_eigenstates = np.append(imag_eigenstates,
+                                     real_eigenstates[delnumber])
+        
+        real_eigenstates = np.delete(real_eigenstates,
+                                     delnumber, axis=0)
+        
+        real_fields_upward = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in real_eigenstates]
+        imag_fields_upward = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in imag_eigenstates]
+        
+        real_fields_downward = [FieldInPhcS(eigenstate, kya=kya, kzdirection=-1)
+                                for eigenstate in real_eigenstates]
+        imag_fields_downward = [FieldInPhcS(eigenstate, kya=kya, kzdirection=-1) 
+                                for eigenstate in imag_eigenstates]
+        
+        fields = [real_fields_upward, real_fields_downward, 
+                  imag_fields_upward, imag_fields_downward]
+        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = getcoefficents(fields, nne, npo)
+        
+        self.even_coefs_inside = np.array(even_coefs)
+        self.odd_coefs_inside = np.array(odd_coefs)
+        
+        fields_flatten = []
+        for field in fields:
+            fields_flatten.extend(field)
+
+        self.fields = fields_flatten
+        self.even_total_field_inside = TotalFieldInPhcS(self.fields,
+                                                        even_coefs)
+        self.odd_total_field_inside = TotalFieldInPhcS(self.fields,
+                                                       odd_coefs)
+        self.even_fileds_in_air = FiledsInAir(even_tx, even_ty, nne,
+                                              npo, qa, k0a, kya)
+        self.odd_fileds_in_air = FiledsInAir(odd_tx, odd_ty, nne, 
+                                             npo, qa, k0a, kya)
+        
+                                                  
+
+    
         
         
    

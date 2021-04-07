@@ -9,12 +9,12 @@ class PhotonicCrystalSlab:
 
     Attributes:
     ------------
-    h: thickness of the PC slab.
-    ep: a list which contains the dielectric constant
-    of the two different layers, most of time, the first is
-    the air.
-    fr: filling ratio (fill the 'air').
-    a: the length of a period.
+    :h: thickness of the PC slab.
+    :ep: a list which contains the dielectric constant
+        of the two different layers, most of time, the first is
+        the air.
+    :fr: filling ratio (fill the 'air').
+    :a: the length of a period.
     """
     def __init__(self, thickness, epsilon, fillingrate, periodlength, mu=[1, 1]):
         self.h = thickness
@@ -88,14 +88,14 @@ class EssentialNumber:
 
     Attributes:
     ------------------
-    ne: number of diffraction orders(negetive)
-    po: number of diffraction orders(positive)
-    d: number of diffraction orders
-    r: number of radiation channels in air
-    list_r: radiation channels orders
-    overlap: number of equal ai and ri
-    real: number of real kz for one q and omega
-    imag: number of considered imag kz for one q and omega 
+    :ne: number of diffraction orders(negetive)
+    :po: number of diffraction orders(positive)
+    :d: number of diffraction orders
+    :r: number of radiation channels in air
+    :list_r: radiation channels orders
+    :overlap: number of equal ai and ri
+    :real: number of real kz for one q and omega
+    :imag: number of considered imag kz for one q and omega 
     """
     def __init__(self, n_ne, n_po, n_propagation, n_radiation):
         """
