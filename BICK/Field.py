@@ -7,9 +7,27 @@ from eigenkpar import find_eigen_kpar
 
 class BulkEigenStates:
     """
-    the eigen states i.e. periodic parts of fields
+    The eigenstates i.e. periodic parts of fields in PhC
     """
     def __init__(self, phcs, k0a, kpar, qa, mode="E", normalization=1):
+        """Initialize the eigenstates in PhC
+        
+        Paramters
+        ---------
+        phcs: PhotonicCrystalSlab
+            the Photonic Crystal Slab which is a kind of class.
+        k0a: float
+            the frequency divided by (2pi*c)
+        kpar: complex
+            the k_parallel of Bloch mode
+        qa: float
+            the Bloch wave number
+        mode: {"E", "H"}, optional
+            the mode of the eigenstate
+        normalization: complex, optional
+            normalization factor
+        
+        """
         if mode == "H":
             mu = -np.array(phcs.ep)
             ep = -np.array(phcs.mu)
@@ -505,11 +523,11 @@ class FieldsWithCTIR:
             nd = 3
         else:
             nd = n_radiation + (n_radiation + 1) % 2
-        nne = nd // 2
-        npo = nd // 2
+        nne = nd // 2 
+        npo = nd // 2 
         nEmode = nd + 1
         nHmode = nd + 1
-        delnumber = 2
+        delnumber = 1
         if nEmode == 0:
             Ek_real_parallel, Ek_imag_parallel = [], []
         else:
@@ -523,9 +541,7 @@ class FieldsWithCTIR:
         
         Ek_real_parallel = np.delete(Ek_real_parallel,
                                      1, axis=0)
-        
-        
-        
+
         E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
                               for kpar in Ek_real_parallel]
         E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
@@ -579,9 +595,3 @@ class FieldsWithCTIR:
         self.odd_fileds_in_air = FiledsInAir(odd_tx, odd_ty, nne, 
                                              npo, qa, k0a, kya)
         
-                                                  
-
-    
-        
-        
-   

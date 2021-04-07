@@ -4,12 +4,26 @@ from MathTool import find_real_roots_for_small_and_big_q, find_n_roots_for_small
 def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     """
     The eigenstates of the 1D photonic crystal.
-
-    :phcs: the Photonic Crystal Slab which is a kind of class.
-    :q: the Bloch wave number
-    :k0: the frequency divided by (2pi*c)
-    :nimag: the number of considered evanescent modes
-    :return: The Fourier coefficients of every Bloch waves' kz in PhC(all_kza)
+    
+    Paramters
+    ---------
+    phcs: PhotonicCrystalSlab
+        the Photonic Crystal Slab which is a kind of class.
+    qa: float
+        the Bloch wave number
+    k0a: float
+        the frequency divided by (2pi*c)
+    nmode: int
+        the number of considered Bloch modes
+    mode: {"E", "H"}, optional
+        the mode of the eigenstate
+    
+    Returns
+    -------
+    real_k_parallel: np.array
+        real k_parallels of eigenstates
+    imag_k_parallel: np.array
+        imag k_parallels of eigenstates
     """
 
     fr = phcs.fr
@@ -45,7 +59,4 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
         imag_k_parallel = 1j * np.array(find_n_roots_for_small_and_big_q(fi, qa, nimag))
         return real_k_parallel, imag_k_parallel
     else:
-        return real_k_parallel[0:nmode], []
-    
-    
-
+        return real_k_parallel[0:nmode], np.array([])
