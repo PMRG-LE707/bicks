@@ -250,44 +250,47 @@ class TotalFieldInPhcS:
         plt.show()
 
 class FieldInPhcS:
-    def __init__(self, eigenstate, kya=0, kzdirection=1):    
+    def __init__(self, eigenstate, kya=0):    
         self.kya = kya
-        self.kza = kzdirection * np.sqrt(eigenstate.kpar ** 2 - kya ** 2 + 0j)
+        self.kza = np.array([np.sqrt(eigenstate.kpar ** 2 
+                                     - kya ** 2 + 0j),
+                             -np.sqrt(eigenstate.kpar ** 2 
+                                     - kya ** 2 + 0j)])
         self.es = eigenstate
         self.k0a = eigenstate.k0a
         self.qa = eigenstate.qa
         self.mode = eigenstate.mode
         
-    def Ex(self, x, z):
+    def Ex(self, x, z, kzdirection=0):
         es = self.es
         qa = self.qa
         k0a = self.k0a
         kya = self.kya
-        kza = self.kza
+        kza = self.kza[0]
         if self.mode == "E":
             output = 0
         else:
             output = -es.v(x) * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
         return output * np.exp(1j * qa * x)
     
-    def Ey(self, x, z):
+    def Ey(self, x, z, kzdirection=0):
         es = self.es
         qa = self.qa
         k0a = self.k0a
         kya = self.kya
-        kza = self.kza
+        kza = self.kza[0]
         if es.mode == "E":
             output = es.u(x) * np.exp(1j * kza * z)
         else:
             output = es.w(x) * np.exp(1j * kza * z) * kya / (k0a * kza)
         return output * np.exp(1j * qa * x)
         
-    def Hx(self, x, z):
+    def Hx(self, x, z, kzdirection=0):
         es = self.es
         qa = self.qa
         k0a = self.k0a
         kya = self.kya
-        kza = self.kza
+        kza = self.kza[0]
         if es.mode == "H":
             output = 0
         else:
@@ -295,12 +298,12 @@ class FieldInPhcS:
         return output * np.exp(1j * qa * x)
     
        
-    def Hy(self, x, z):
+    def Hy(self, x, z, kzdirection=0):
         es = self.es
         qa = self.qa
         k0a = self.k0a
         kya = self.kya
-        kza = self.kza
+        kza = self.kza[0]
         if es.mode == "H":
             output = es.u(x) * np.exp(1j * kza * z)
         else:
@@ -321,7 +324,7 @@ class FieldInPhcS:
         
         if field_direction == "Ex":
             if self.mode == "E":
-                output = 0
+                output = 0 * kza
             else:
                 output = -C * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
             return output
@@ -335,7 +338,7 @@ class FieldInPhcS:
         
         elif field_direction == "Hx":
             if es.mode == "H":
-                output = 0
+                output = 0 * kza
             else:
                 output = -C * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
             return output
@@ -564,18 +567,12 @@ class FieldsWithCTIR:
         real_eigenstates = np.delete(real_eigenstates,
                                      delnumber, axis=0)
         
-        real_fields_upward = [FieldInPhcS(eigenstate, kya=kya) 
+        real_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in real_eigenstates]
-        imag_fields_upward = [FieldInPhcS(eigenstate, kya=kya) 
+        imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
         
-        real_fields_downward = [FieldInPhcS(eigenstate, kya=kya, kzdirection=-1)
-                                for eigenstate in real_eigenstates]
-        imag_fields_downward = [FieldInPhcS(eigenstate, kya=kya, kzdirection=-1) 
-                                for eigenstate in imag_eigenstates]
-        
-        fields = [real_fields_upward, real_fields_downward, 
-                  imag_fields_upward, imag_fields_downward]
+        fields = [real_fields, imag_fields] 
         [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = getcoefficents(fields, nne, npo)
         
         self.even_coefs_inside = np.array(even_coefs)

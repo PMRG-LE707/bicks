@@ -46,10 +46,8 @@ def getcoemix(fields, nne, npo, constant_number=0):
     
     # fields in real and imag part
     real_fields = fields[0] * 1
-    real_fields.extend(fields[1])
     # incident and reflaction fields have the same number
-    imag_fields_in = fields[2] * 1
-    imag_fields_re = fields[3] * 1
+    imag_fields = fields[1] * 1
     
     field_components = ["Ex", "Ey", "Hx", "Hy"]
     even_extend_Matrix = []
@@ -64,7 +62,7 @@ def getcoemix(fields, nne, npo, constant_number=0):
     # diffraction number
     nd = nne + npo + 1
     n_real = len(real_fields)
-    n_imag = len(imag_fields_in)
+    n_imag = len(imag_fields)
     
     # flag will growth 1 if it not in channel oder
     flag = 0
@@ -75,15 +73,24 @@ def getcoemix(fields, nne, npo, constant_number=0):
             # one row in extended matrix
             even_one_row = []
             odd_one_row = []
+            """
+            inside_field_real_part = []
+            for field in real_fields:
+                fcs = field.fieldfc(i, component)
+                inside_field_real_part.extend(fcs)
             
-            inside_field_real_part = [field.fieldfc(i, component) 
-                                      for field in real_fields]
+            """
+            inside_field_real_part = np.array([field.fieldfc(i, component) 
+                                      for field in real_fields]).flatten().tolist()
+            
             odd_inside_field_imag_part = []
             even_inside_field_imag_part = []
             for j in range(n_imag):
-                field_mode = imag_fields_in[j].mode
-                in_field = imag_fields_in[j].fieldfc(i, component)
-                re_field = imag_fields_re[j].fieldfc(i, component)
+                field_mode = imag_fields[j].mode
+                fieldfcs = imag_fields[j].fieldfc(i, component)
+                in_field = fieldfcs[0]
+                re_field = fieldfcs[1]
+                
                 
                 if field_mode == "E":
                     odd_inside_field_imag_part.append(in_field - re_field)
@@ -146,7 +153,7 @@ def getcoemix(fields, nne, npo, constant_number=0):
         coefs = [1] 
         coefs.extend(solve_coefficents[0:n_real + n_imag - 1])
         for j in range(n_imag):
-            field_mode = imag_fields_in[j].mode
+            field_mode = imag_fields[j].mode
             if field_mode == "E":
                 coefs.append(solve_coefficents[n_real - 1 + j])
             else:
