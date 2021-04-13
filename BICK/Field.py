@@ -631,7 +631,7 @@ class FieldsWithCTIRSingle:
         else:
             Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
                                                              nHmode, mode="H")
-            
+        
         E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
                               for kpar in Ek_real_parallel]
         E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
@@ -652,10 +652,10 @@ class FieldsWithCTIRSingle:
                               for eigenstate in real_eigenstates]
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
-
+        
         fields = [real_fields, imag_fields] 
         [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = getcoefficents(fields, nne, npo)
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
-       
+

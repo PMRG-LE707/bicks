@@ -97,7 +97,8 @@ class EssentialNumber:
     :real: number of real kz for one q and omega
     :imag: number of considered imag kz for one q and omega 
     """
-    def __init__(self, n_ne, n_po, n_propagation, n_radiation):
+    def __init__(self, n_radiation=1, nd_plus=0,
+                 mode='E', n_propagation=None):
         """
         n_ne: number of diffraction orders(negetive)
         n_po: number of diffraction orders(negetive)
@@ -105,24 +106,36 @@ class EssentialNumber:
         n_propagation: number of real kz for one q and omega
         """
         
-        n_d = n_ne + n_po + 1
-        if n_radiation%2:
-            temlistr = [i - (n_radiation - 1)/2 for i in range(n_radiation)]
-        else:
-            temlistr = [i - (n_radiation - 2)/2 for i in range(n_radiation)]
-        list_r = [int(i + n_ne) for i in temlistr]
-        n_e_imag = n_d + n_radiation - 2 * n_propagation + 1
-        n_e_overlap = n_e_imag
-        n_m_imag = n_e_imag - 1
-        n_m_overlap = n_m_imag
-        
-        self.ne = n_ne
-        self.po = n_po
-        self.d = n_d
         self.r = n_radiation
-        self.list_r = list_r
-        self.overlap_e = n_e_overlap
-        self.overlap_m = n_m_overlap
-        self.real = n_propagation
-        self.imag_e = n_e_imag
-        self.imag_m = n_m_imag
+        
+        if n_propagation==None:
+            self.real = n_radiation + 1
+            if n_radiation <= 3:
+                self.d = 3 + nd_plus
+                
+            else:
+                self.d = n_radiation + (n_radiation + 1) % 2 + nd_plus
+            
+            self.ne = self.d // 2 
+            self.po = self.d // 2 
+            
+            if mode.lower() == "e":
+                self.Emode = self.d + 2 - self.real
+                self.Hmode = 0
+                
+            elif mode.lower() == "h":
+                self.Hmode = self.d + 2 - self.real
+                self.Emode = 0
+                
+        elif n_propagation == 3 and n_radiation == 1:
+            self.real = n_propagation
+        
+        else:
+            raise ValueError("n_propagation should be None or 3 while n_radiation == 1")
+
+        if n_radiation%2:
+            listr = [i - (n_radiation - 1) // 2 for i in range(n_radiation)]
+        else:
+            listr = [i - n_radiation // 2 for i in range(n_radiation)]
+
+        self.listr = listr
