@@ -311,7 +311,7 @@ class FieldInPhcS:
         return output * np.exp(1j * qa * x)
 
   
-    def fieldfc(self, i, field_direction):
+    def fieldfc(self, i, field_compoments):
         """
         without the basis
         """
@@ -322,33 +322,36 @@ class FieldInPhcS:
         z = es.phcs.h / 2
         A, B, C = es.Fourier_coefficients(i)
         
-        if field_direction == "Ex":
-            if self.mode == "E":
-                output = 0 * kza
+        expz = np.exp(1j * kza * z)
+        field_Fourier = {}
+        for field_direction in field_compoments:
+            if field_direction == "Ex":
+                if self.mode == "E":
+                    output = 0 * kza
+                else:
+                    output = -C * expz * (kya ** 2 / kza + kza) / k0a
+ 
+            elif field_direction == "Ey":
+                if es.mode == "E":
+                    output = A * expz
+                else:
+                    output = B * expz * kya / (k0a * kza)
+ 
+            elif field_direction == "Hx":
+                if es.mode == "H":
+                    output = 0 * kza
+                else:
+                    output = -C * expz * (kya ** 2 / kza + kza) / k0a
+ 
             else:
-                output = -C * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
-            return output
-        
-        elif field_direction == "Ey":
-            if es.mode == "E":
-                output = A * np.exp(1j * kza * z)
-            else:
-                output = B * np.exp(1j * kza * z) * kya / (k0a * kza)
-            return output
-        
-        elif field_direction == "Hx":
-            if es.mode == "H":
-                output = 0 * kza
-            else:
-                output = -C * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
-            return output
-        
-        else:
-            if es.mode == "H":
-                output = A * np.exp(1j * kza * z)
-            else:
-                output = B * np.exp(1j * kza * z) * kya / (k0a * kza)
-            return output
+                if es.mode == "H":
+                    output = A * expz
+                else:
+                    output = B * expz * kya / (k0a * kza)
+            
+            field_Fourier[field_direction] = output
+        self.field_Fourier = field_Fourier
+        return field_Fourier
     
     def show(self, fieldcomponent, oprator, Nx=20):
         """

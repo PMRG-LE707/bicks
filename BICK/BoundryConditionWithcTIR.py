@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import time
 
 def getcoefficents(fields, nne, npo, polarizationmode="mix"):
     """
@@ -20,6 +21,11 @@ def getcoefficents(fields, nne, npo, polarizationmode="mix"):
     """
     
     if polarizationmode == "mix":
+        t1 = time.time()
+        for i in range(2 * 10 ** 4):
+            getcoemix(fields, nne, npo)
+        t2= time.time()
+        print(t2 - t1)
         return getcoemix(fields, nne, npo)
     elif polarizationmode == "single":
         return getcoesingle(fields, nne, npo)
@@ -69,6 +75,9 @@ def getcoemix(fields, nne, npo, constant_number=0):
     for i in range(-nne, npo + 1, 1):
         kxai = i * 2 * np.pi + qa
         kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
+        expz = np.exp(1j * kzaouti * h / 2)
+        [field.fieldfc(i, field_components) for field in real_fields]
+        [field.fieldfc(i, field_components) for field in imag_fields]
         for component in field_components:
             # one row in extended matrix
             even_one_row = []
@@ -76,21 +85,20 @@ def getcoemix(fields, nne, npo, constant_number=0):
             """
             inside_field_real_part = []
             for field in real_fields:
-                fcs = field.fieldfc(i, component)
+                fcs =field.field_Fourier[component]
                 inside_field_real_part.extend(fcs)
             
             """
-            inside_field_real_part = np.array([field.fieldfc(i, component) 
+            inside_field_real_part = np.array([field.field_Fourier[component] 
                                       for field in real_fields]).flatten().tolist()
             
             odd_inside_field_imag_part = []
             even_inside_field_imag_part = []
             for j in range(n_imag):
                 field_mode = imag_fields[j].mode
-                fieldfcs = imag_fields[j].fieldfc(i, component)
+                fieldfcs = imag_fields[j].field_Fourier[component] 
                 in_field = fieldfcs[0]
                 re_field = fieldfcs[1]
-                
                 
                 if field_mode == "E":
                     odd_inside_field_imag_part.append(in_field - re_field)
@@ -103,7 +111,6 @@ def getcoemix(fields, nne, npo, constant_number=0):
             outside_fields_ty = [0 for j in range(nd - 1)]
             
             if i != 0:
-                expz = np.exp(1j * kzaouti * h / 2)
                 if component == "Ex":
                     outside_fields_tx[flag] = -expz
                 
@@ -133,6 +140,7 @@ def getcoemix(fields, nne, npo, constant_number=0):
         if i != 0:
             flag = flag + 1
     
+    n_real *= 2
     def solve(extend_Matrix):
         """
         Give the extended matrix to get the solution.
@@ -143,14 +151,17 @@ def getcoemix(fields, nne, npo, constant_number=0):
         :return: the coefficients of the fields in the PhCs and
             tx and ty
         """
+        
         extend_Matrix = np.array(extend_Matrix)
+        
         coefficients_Matrix = np.delete(extend_Matrix, 
                                         constant_number, 
                                         axis=1)
         constant_vector = - extend_Matrix[:, constant_number] * 1
         solve_coefficents = np.linalg.solve(coefficients_Matrix, constant_vector)
         
-        coefs = [1] 
+        coefs = [1]
+        
         coefs.extend(solve_coefficents[0:n_real + n_imag - 1])
         for j in range(n_imag):
             field_mode = imag_fields[j].mode
@@ -163,9 +174,11 @@ def getcoemix(fields, nne, npo, constant_number=0):
                                n_real + n_imag - 1 + nd - 1]
         
         ty = solve_coefficents[n_real + n_imag - 1 + nd - 1:]
-        return [coefs, tx, ty]     
 
+        return (coefs, tx, ty)     
+    
     return solve(even_extend_Matrix), solve(odd_extend_Matrix)
+
 
 def getcoesingle(fields, nne, npo, constant_number=0):
     """
