@@ -247,7 +247,6 @@ class TotalFieldInPhcS:
                    )
          )
         plt.show()
-        plt.show()
 
 class FieldInPhcS:
     def __init__(self, eigenstate, kya=0):    
@@ -520,6 +519,7 @@ class FiledsInAir:
 class FieldsWithCTIR:
     
     def __init__(self, phcs, k0a, qa, kya):
+        
         self.phcs = phcs
         self.k0a = k0a
         self.qa = qa
@@ -580,7 +580,7 @@ class FieldsWithCTIR:
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
-        
+        """
         fields_flatten = []
         for field in fields:
             fields_flatten.extend(field)
@@ -594,4 +594,68 @@ class FieldsWithCTIR:
                                               npo, qa, k0a, kya)
         self.odd_fileds_in_air = FiledsInAir(odd_tx, odd_ty, nne, 
                                              npo, qa, k0a, kya)
+        """
         
+class FieldsWithCTIRSingle:
+    
+    def __init__(self, phcs, k0a, qa, kya, n_radiation=1, nd_plus=0, mode="E"):
+        """
+        there is one more propagating modes than radiation channels.
+        """
+        
+        self.phcs = phcs
+        self.k0a = k0a
+        self.qa = qa
+        self.kya = kya
+        n_propagating = n_radiation + 1
+        if n_radiation <= 3:
+            nd = 3 + nd_plus
+        else:
+            nd = n_radiation + (n_radiation + 1) % 2 + nd_plus
+        nne = nd // 2 
+        npo = nd // 2 
+        if mode.lower() == "e":
+            nEmode = nd - 2 + n_propagating
+            nHmode = 0
+        elif mode.lower() == "h":
+            nHmode = nd - 2 + n_propagating
+            nEmode = 0
+        
+        if nEmode == 0:
+            Ek_real_parallel, Ek_imag_parallel = [], []
+        else:
+            Ek_real_parallel, Ek_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+                                                             nEmode, mode="E")
+        if nHmode == 0:
+            Hk_real_parallel, Hk_imag_parallel = [], []
+        else:
+            Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+                                                             nHmode, mode="H")
+            
+        E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_real_parallel]
+        E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_imag_parallel]
+        
+        H_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_real_parallel]
+        H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_imag_parallel]
+        
+        real_eigenstates = E_real_eigenstates * 1
+        real_eigenstates.extend(H_real_eigenstates)
+        
+        imag_eigenstates = E_imag_eigenstates * 1
+        imag_eigenstates.extend(H_imag_eigenstates)
+        
+        real_fields = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in real_eigenstates]
+        imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in imag_eigenstates]
+
+        fields = [real_fields, imag_fields] 
+        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = getcoefficents(fields, nne, npo)
+        
+        self.even_coefs_inside = np.array(even_coefs)
+        self.odd_coefs_inside = np.array(odd_coefs)
+       
