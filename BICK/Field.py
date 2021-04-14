@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import copy
 from BoundryConditionWithcTIR import getcoefficents
 from eigenkpar import find_eigen_kpar
+import time
+
 
 class BulkEigenStates:
     """
@@ -596,9 +598,11 @@ class FieldsWithCTIR:
                                              npo, qa, k0a, kya)
         """
         
-class FieldsWithCTIRSingle:
+class FieldsWithCTIRSingleOld:
     
-    def __init__(self, phcs, k0a, qa, kya, n_radiation=1, nd_plus=0, mode="E"):
+    def __init__(self, phcs, num,
+                 k0a, qa, kya,
+                 mode="E"):
         """
         there is one more propagating modes than radiation channels.
         """
@@ -607,18 +611,12 @@ class FieldsWithCTIRSingle:
         self.k0a = k0a
         self.qa = qa
         self.kya = kya
-        n_propagating = n_radiation + 1
-        if n_radiation <= 3:
-            nd = 3 + nd_plus
-        else:
-            nd = n_radiation + (n_radiation + 1) % 2 + nd_plus
-        nne = nd // 2 
-        npo = nd // 2 
+        
         if mode.lower() == "e":
-            nEmode = nd - 2 + n_propagating
+            nEmode = num.modes
             nHmode = 0
         elif mode.lower() == "h":
-            nHmode = nd - 2 + n_propagating
+            nHmode = num.modes
             nEmode = 0
         
         if nEmode == 0:
@@ -652,10 +650,69 @@ class FieldsWithCTIRSingle:
                               for eigenstate in real_eigenstates]
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
-        
-        fields = [real_fields, imag_fields] 
-        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = getcoefficents(fields, nne, npo)
+        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = \
+            getcoefficents(real_fields, imag_fields, num)
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
 
+class FieldsWithCTIRInAera:
+    
+    def __init__(self, phcs, num,
+                 k0a, qa, kya,
+                 real_parallel,
+                 imag_parallel,
+                 mode="E"):
+        """
+        there is one more propagating modes than radiation channels.
+        """
+        
+        self.phcs = phcs
+        self.k0a = k0a
+        self.qa = qa
+        self.kya = kya
+        
+        
+        if mode.lower() == "e":
+            nEmode = num.modes
+            nHmode = 0
+        elif mode.lower() == "h":
+            nHmode = num.modes
+            nEmode = 0
+        
+        if nEmode == 0:
+            Ek_real_parallel, Ek_imag_parallel = [], []
+            Hk_real_parallel, Hk_imag_parallel = \
+                real_parallel, imag_parallel
+        else:
+            Hk_real_parallel, Hk_imag_parallel = [], []
+            Ek_real_parallel, Ek_imag_parallel = \
+                real_parallel, imag_parallel
+                
+        E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_real_parallel]
+        E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_imag_parallel]
+        
+        H_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_real_parallel]
+        H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_imag_parallel]
+        
+        real_eigenstates = E_real_eigenstates
+        real_eigenstates.extend(H_real_eigenstates)
+        
+        imag_eigenstates = E_imag_eigenstates
+        imag_eigenstates.extend(H_imag_eigenstates)
+        
+        real_fields = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in real_eigenstates]
+        imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in imag_eigenstates]
+        
+        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = \
+            getcoefficents(real_fields, imag_fields, num)
+        
+        self.even_coefs_inside = np.array(even_coefs)
+        self.odd_coefs_inside = np.array(odd_coefs)
+     

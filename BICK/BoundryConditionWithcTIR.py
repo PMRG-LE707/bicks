@@ -2,7 +2,8 @@
 import numpy as np
 import time
 
-def getcoefficents(fields, nne, npo, polarizationmode="single"):
+def getcoefficents(real_fields, imag_fields,
+                   num, polarizationmode="single"):
     """
     I'am a function, I can give you the coefficents of
     different eigenstates(both incidence and reflection)
@@ -23,22 +24,17 @@ def getcoefficents(fields, nne, npo, polarizationmode="single"):
     if polarizationmode == "mix":
         t1 = time.time()
         for i in range(10 ** 3):
-            getcoemix(fields, nne, npo)
+            getcoemix(real_fields, imag_fields, num)
         t2= time.time()
         print(t2 - t1)
-        return getcoemix(fields, nne, npo)
+        return getcoemix(real_fields, imag_fields, num)
     elif polarizationmode == "single":
-        t1 = time.time()
-        for i in range(2 * 10 ** 4):
-            getcoesingle(fields, nne, npo)
-        t2= time.time()
-        print(t2 - t1)
-        return getcoesingle(fields, nne, npo)
+        return getcoesingle(real_fields, imag_fields, num)
     else:
         "happy"
     
 
-def getcoemix(fields, nne, npo, constant_number=0):
+def getcoemix(real_fields, imag_fields, num, constant_number=0):
     """
     For the mix mode(both E and H mode)
     
@@ -54,11 +50,10 @@ def getcoemix(fields, nne, npo, constant_number=0):
         kinds(even or odd for E mode)
     """
     
-    
+    nd = num.d
+    nne = num.ne
+    npo = num.po
     # fields in real and imag part
-    real_fields = fields[0]
-    imag_fields = fields[1]
-    
     field_components = ["Ex", "Ey", "Hx", "Hy"]
     even_extend_Matrix = []
     odd_extend_Matrix = []
@@ -70,7 +65,6 @@ def getcoemix(fields, nne, npo, constant_number=0):
     h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
     
     # diffraction number
-    nd = nne + npo + 1
     n_real = len(real_fields)
     n_imag = len(imag_fields)
     
@@ -177,7 +171,7 @@ def getcoemix(fields, nne, npo, constant_number=0):
     return solve(even_extend_Matrix), solve(odd_extend_Matrix)
 
 
-def getcoesingle(fields, nne, npo, constant_number=0):
+def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     """
     For the single mode(only E or H mode)
     
@@ -192,9 +186,10 @@ def getcoesingle(fields, nne, npo, constant_number=0):
     :return: the coefficents of different eigenstates in two
         kinds(even or odd)
     """
+    nd = num.d
+    nne = num.ne
+    npo = num.po
     # fields in real and imag part
-    real_fields = fields[0]
-    imag_fields = fields[1]
     
     field_mode = real_fields[0].mode
     if field_mode == "E":
@@ -208,7 +203,6 @@ def getcoesingle(fields, nne, npo, constant_number=0):
     k0a = real_fields[0].k0a
     kya = real_fields[0].kya
     h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
-    nd = nne + npo + 1
     
     n_imag = len(imag_fields)
     n_real = len(real_fields)

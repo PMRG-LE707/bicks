@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class PhotonicCrystalSlab:
@@ -16,7 +17,7 @@ class PhotonicCrystalSlab:
     :fr: filling ratio (fill the 'air').
     :a: the length of a period.
     """
-    def __init__(self, thickness, epsilon, fillingrate, periodlength, mu=[1, 1]):
+    def __init__(self, thickness, epsilon, fillingrate, periodlength, mu=np.array([1, 1])):
         self.h = thickness
         self.ep = epsilon
         self.fr = fillingrate
@@ -88,44 +89,53 @@ class EssentialNumber:
 
     Attributes:
     ------------------
-    :ne: number of diffraction orders(negetive)
-    :po: number of diffraction orders(positive)
-    :d: number of diffraction orders
-    :r: number of radiation channels in air
-    :list_r: radiation channels orders
-    :overlap: number of equal ai and ri
-    :real: number of real kz for one q and omega
-    :imag: number of considered imag kz for one q and omega 
+    ne: int(>0)
+        number of diffraction orders(negetive)
+    po: int(>0)
+        number of diffraction orders(positive)
+    d: int(>0)
+        number of diffraction orders
+    r: int(>0)
+        number of radiation channels in air
+    listr: np.array(, dtype=np.int)
+        radiation channels orders
+    real: int(>0)
+        number of considered real kz for Bloch q and frequency
+    imag: int(>=0)
+        number of considered imag kz for Bloch q and frequency
+    modes: int(>=0)
+        number of considered kz for Bloch q and frequency;
+        modes = real + imag
     """
     def __init__(self, n_radiation=1, nd_plus=0,
-                 mode='E', n_propagation=None):
+                 n_propagation=None):
         """
-        n_ne: number of diffraction orders(negetive)
-        n_po: number of diffraction orders(negetive)
-        n_radiation: number of radiation channels in air
-        n_propagation: number of real kz for one q and omega
+        Initialize the class
+        
+        Paramters
+        ---------
+        n_radiation: int, optional
+            number of radiation channels in air
+            
+        nd_plus: int, optional
+            considered more diffraction orders,
+            the more orders considered the better accurcy got.
+            
+        n_propagation: None or int(=2), optional
+            number of real kz for one Bloch q and frequency,
+            if None: the number = n_radiation + 1
+            if 3 : the number = 3 and the n_radiation must be 1
         """
         
         self.r = n_radiation
         
         if n_propagation==None:
             self.real = n_radiation + 1
-            if n_radiation <= 3:
-                self.d = 3 + nd_plus
-                
-            else:
-                self.d = n_radiation + (n_radiation + 1) % 2 + nd_plus
-            
+            self.d = 2 * (self.real + nd_plus) - 1
             self.ne = self.d // 2 
             self.po = self.d // 2 
-            
-            if mode.lower() == "e":
-                self.Emode = self.d + 2 - self.real
-                self.Hmode = 0
-                
-            elif mode.lower() == "h":
-                self.Hmode = self.d + 2 - self.real
-                self.Emode = 0
+            self.modes = self.d + 2 - self.real
+            self.imag = self.modes - self.real
                 
         elif n_propagation == 3 and n_radiation == 1:
             self.real = n_propagation
@@ -134,8 +144,12 @@ class EssentialNumber:
             raise ValueError("n_propagation should be None or 3 while n_radiation == 1")
 
         if n_radiation%2:
-            listr = [i - (n_radiation - 1) // 2 for i in range(n_radiation)]
+            listr = [i - (n_radiation - 1) // 2
+                     for i in range(n_radiation)]
+        
         else:
-            listr = [i - n_radiation // 2 for i in range(n_radiation)]
+            listr = [i - n_radiation // 2
+                     for i in range(n_radiation)]
 
-        self.listr = listr
+        self.listr = np.array(listr, dtype=np.int)
+

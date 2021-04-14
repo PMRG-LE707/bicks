@@ -1,5 +1,5 @@
 import numpy as np
-from PhotonicCrystalSlab import PhotonicCrystalSlab
+from PhotonicCrystalSlab import PhotonicCrystalSlab, EssentialNumber
 from Field import FieldsWithCTIR, FieldsWithCTIRSingle
 
 
@@ -13,11 +13,12 @@ h = hset[nnu] * a
 fr = 0.5
 ep = [1.0, 4.9]
 phcs = PhotonicCrystalSlab(h, ep, fr, a)
+num = EssentialNumber()
 
 k0a = k0[nnu] * 2 * np.pi
 qa = qorky[nnu] * 2 * np.pi
 kya = 0  * 2 * np.pi
-cTIRfield = FieldsWithCTIRSingle(phcs, k0a, qa, kya)
+cTIRfield = FieldsWithCTIRSingle(phcs, num, k0a, qa, kya)
 print(cTIRfield.odd_coefs_inside)
 
 
