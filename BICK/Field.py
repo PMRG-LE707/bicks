@@ -598,7 +598,7 @@ class FieldsWithCTIR:
                                              npo, qa, k0a, kya)
         """
         
-class FieldsWithCTIRSingleOld:
+class FieldsWithCTIRSingle:
     
     def __init__(self, phcs, num,
                  k0a, qa, kya,
@@ -629,7 +629,6 @@ class FieldsWithCTIRSingleOld:
         else:
             Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
                                                              nHmode, mode="H")
-        
         E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
                               for kpar in Ek_real_parallel]
         E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
@@ -650,7 +649,7 @@ class FieldsWithCTIRSingleOld:
                               for eigenstate in real_eigenstates]
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
-        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = \
+        even_coefs, odd_coefs = \
             getcoefficents(real_fields, imag_fields, num)
         
         self.even_coefs_inside = np.array(even_coefs)
@@ -710,7 +709,7 @@ class FieldsWithCTIRInAera:
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
         
-        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = \
+        even_coefs, odd_coefs = \
             getcoefficents(real_fields, imag_fields, num)
         
         self.even_coefs_inside = np.array(even_coefs)

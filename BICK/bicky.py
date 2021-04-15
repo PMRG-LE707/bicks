@@ -81,14 +81,15 @@ class FindBICs:
         real_k_parallel, imag_k_parallel = \
             self.real_k_parallel, self.imag_k_parallel
         kya = 0
-        awe = []
+        ctirfields = []
         for i in range(len(qk0)):
             qa, k0a = qk0[i]
-            awe.append(FieldsWithCTIRInAera(phcs, num,
+            ctirfields.append(FieldsWithCTIRInAera(phcs, num,
                                        k0a*2*np.pi,
                                        qa*2*np.pi, kya,
                                        real_k_parallel[i],
                                        imag_k_parallel[i]))
+        self.ctirfields = ctirfields
     def run(self, hstart, hend, Nh=100):
         "sad"
     
@@ -97,11 +98,14 @@ a = 1
 h = 1.4 * a
 fr = 0.5
 ep = np.array([1.0, 4.9])
+hstart = 1
+hend = 3
 phcs = PhotonicCrystalSlab(h, ep, fr, a)
 
-num = EssentialNumber()
+num = EssentialNumber(n_radiation=3)
 t11 = time.time()
 fb1 = FindBICs(phcs, num)  
 fb1.getcoeffs()
+bics = fb1.run(hstart, hend)
 t22 = time.time()
 print(t22 - t11)

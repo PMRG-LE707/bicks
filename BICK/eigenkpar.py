@@ -36,8 +36,7 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     elif mode.lower() == "h":
         ep = -phcs.mu
         mu = -phcs.ep
-    nmax = np.sqrt(np.abs(ep).max())
-    
+    nmax = np.sqrt((ep*mu).max())
     def f(k_parallel):
         kxa = [np.sqrt(mu[i] * ep[i] * (k0a) ** 2 - k_parallel ** 2 + 0j) for i in range(2)]
         eta = (kxa[1] * mu[0]) / (kxa[0] * mu[1])

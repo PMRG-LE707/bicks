@@ -19,6 +19,7 @@ class PhotonicCrystalSlab:
     """
     def __init__(self, thickness, epsilon, fillingrate, periodlength, mu=np.array([1, 1])):
         self.h = thickness
+        epsilon = np.array(epsilon)
         self.ep = epsilon
         self.fr = fillingrate
         self.a = periodlength
@@ -107,7 +108,7 @@ class EssentialNumber:
         number of considered kz for Bloch q and frequency;
         modes = real + imag
     """
-    def __init__(self, n_radiation=1, nd_plus=0,
+    def __init__(self, n_radiation=1, nimag_plus=0,
                  n_propagation=None):
         """
         Initialize the class
@@ -117,8 +118,8 @@ class EssentialNumber:
         n_radiation: int, optional
             number of radiation channels in air
             
-        nd_plus: int, optional
-            considered more diffraction orders,
+        nimag_plus: int, optional
+            considered more imag modes,
             the more orders considered the better accurcy got.
             
         n_propagation: None or int(=2), optional
@@ -131,11 +132,14 @@ class EssentialNumber:
         
         if n_propagation==None:
             self.real = n_radiation + 1
-            self.d = 2 * (self.real + nd_plus) - 1
+            if self.real%2:
+                self.imag = 2 + nimag_plus
+            else:
+                self.imag = 1 + nimag_plus
+            self.modes = self.real + self.imag
+            self.d = self.modes
             self.ne = self.d // 2 
             self.po = self.d // 2 
-            self.modes = self.d + 2 - self.real
-            self.imag = self.modes - self.real
                 
         elif n_propagation == 3 and n_radiation == 1:
             self.real = n_propagation

@@ -35,7 +35,7 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
     elif mode.lower() == "h":
         ep = -phcs.mu
         mu = -phcs.ep
-    nmax = np.sqrt(np.abs(ep).max())
+    nmax = np.sqrt((ep*mu).max())
 
     k0_floor = []
     k0_ceiling = []

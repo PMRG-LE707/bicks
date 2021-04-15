@@ -189,6 +189,7 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     nd = num.d
     nne = num.ne
     npo = num.po
+    
     # fields in real and imag part
     
     field_mode = real_fields[0].mode
@@ -204,9 +205,12 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     kya = real_fields[0].kya
     h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
     
-    n_imag = len(imag_fields)
-    n_real = len(real_fields)
+    n_imag = num.imag
+    n_real = num.real
     flag = 0
+    expzh = np.exp(1j*h*np.array([field.kza[0]
+                                  for field in real_fields]))
+    
     for i in range(-nne, npo + 1, 1):
         kxai = i * 2 * np.pi + qa
         kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
@@ -234,9 +238,9 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
                     even_inside_field_imag_part.append(in_field - re_field)
                 
          
-            outside_fields_t = [0 for j in range(nd - 1)]
+            outside_fields_t = [0 for j in range(nd - num.r)]
             
-            if i != 0:
+            if i not in num.listr:
                 if component == "Ey" or component == "Hy":
                     outside_fields_t[flag] = -expz
                 else:
@@ -255,10 +259,9 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
             
             even_extend_Matrix.append(even_one_row)
             odd_extend_Matrix.append(odd_one_row)
-        if i != 0:
+        if i not in num.listr:
             flag = flag + 1
     
-    n_real *= 2
     def solve(extend_Matrix):
         """
         Give the extended matrix to get the solution.
@@ -275,13 +278,15 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
                                         constant_number, 
                                         axis=1)
         constant_vector = - extend_Matrix[:, constant_number] * 1
-        solve_coefficents = np.linalg.solve(coefficients_Matrix, constant_vector)
+        solve_coefficents = np.linalg.solve(coefficients_Matrix,
+                                            constant_vector)
+        coefficents = np.append(np.ones(1, dtype=complex),
+                               solve_coefficents)
         
-        tx = [1]
-        
-        ty = [2]
+        real_coeffs_ratio = [coefficents[i] / coefficents[i+1] 
+                             for i in range(0, 2*n_real, 2)]
 
-        return (solve_coefficents, tx, ty)  
+        return real_coeffs_ratio# * expzh
     
     return solve(even_extend_Matrix), solve(odd_extend_Matrix)
 
