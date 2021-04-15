@@ -98,14 +98,12 @@ a = 1
 h = 1.4 * a
 fr = 0.5
 ep = np.array([1.0, 4.9])
-hstart = 1
-hend = 3
 phcs = PhotonicCrystalSlab(h, ep, fr, a)
 
 num = EssentialNumber(n_radiation=3)
-t11 = time.time()
+hstart = 1
+hend = 3
+
 fb1 = FindBICs(phcs, num)  
 fb1.getcoeffs()
 bics = fb1.run(hstart, hend)
-t22 = time.time()
-print(t22 - t11)
