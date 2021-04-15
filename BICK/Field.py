@@ -649,11 +649,12 @@ class FieldsWithCTIRSingle:
                               for eigenstate in real_eigenstates]
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
-        even_coefs, odd_coefs = \
+        even_coefs, odd_coefs, real_kzas = \
             getcoefficents(real_fields, imag_fields, num)
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
+        self.realkzs = real_kzas
 
 class FieldsWithCTIRInAera:
     
@@ -709,9 +710,10 @@ class FieldsWithCTIRInAera:
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
         
-        even_coefs, odd_coefs = \
+        even_coefs, odd_coefs, real_kzas = \
             getcoefficents(real_fields, imag_fields, num)
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
+        self.realkzs = real_kzas
      

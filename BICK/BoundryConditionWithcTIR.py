@@ -208,9 +208,10 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     n_imag = num.imag
     n_real = num.real
     flag = 0
-    expzh = np.exp(1j*h*np.array([field.kza[0]
-                                  for field in real_fields]))
-    
+    real_kzas = np.array([field.kza[0]
+                          for field in real_fields])
+    expzh = np.exp(1j*h*real_kzas)
+
     for i in range(-nne, npo + 1, 1):
         kxai = i * 2 * np.pi + qa
         kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
@@ -286,8 +287,8 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1] 
                              for i in range(0, 2*n_real, 2)]
 
-        return real_coeffs_ratio# * expzh
+        return real_coeffs_ratio #* expzh
     
-    return solve(even_extend_Matrix), solve(odd_extend_Matrix)
+    return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
 
 
