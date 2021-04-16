@@ -27,14 +27,11 @@ class FindBICs:
         
         """
         deltaq = 0.5/Nq
-        t1 = time.time()
         k0_floor, k0_ceiling, dataq, band_proj = \
             find_band_projection(phcs, num, mode=mode, Nq=Nq)
         datak0 = band_proj["k0a"]
         kpara_real_range_origin = band_proj["real"]
         kpara_imag_range_origin = band_proj["imag"]
-        t2 = time.time()  
-        print(t2 - t1)
         
         #gridding
         real_k_parallel, imag_k_parallel, qk0 = [], [], []
@@ -188,15 +185,3 @@ class FindBICs:
         self.bic_k0s = bic_k0s
         self.bic_hs = bic_hs
         
-
-   
-a = 1
-h = 1.4 * a
-fr = 0.5
-ep = np.array([1.0, 4.9])
-phcs = PhotonicCrystalSlab(h, ep, fr, a)
-
-num = EssentialNumber(n_radiation=1)
-
-fb1 = FindBICs(phcs, num, Nq=250, mode="H")  
-fb1.getcoeffs()

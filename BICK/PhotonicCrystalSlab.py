@@ -17,7 +17,10 @@ class PhotonicCrystalSlab:
     :fr: filling ratio (fill the 'air').
     :a: the length of a period.
     """
-    def __init__(self, thickness, epsilon, fillingrate, periodlength, mu=np.array([1, 1])):
+    def __init__(self, epsilon,
+                 fillingrate, periodlength,
+                 mu=np.array([1, 1]),
+                 thickness=1.0):
         self.h = thickness
         epsilon = np.array(epsilon)
         self.ep = epsilon
