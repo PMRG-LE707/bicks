@@ -10,12 +10,9 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
     ---------
     phcs: PhotonicCrystalSlab
         the Photonic Crystal Slab which is a kind of class.
-    
     num: EssentialNumber
-    
     mode: {"E", "H"}, optional
-        the mode of the eigenstate
-        
+        the mode of the eigenstate   
     Nq: int, optional
         number which we divided half of Brillouin into
     

@@ -10,27 +10,45 @@ class PhotonicCrystalSlab:
 
     Attributes:
     ------------
-    :h: thickness of the PC slab.
-    :ep: a list which contains the dielectric constant
-        of the two different layers, most of time, the first is
-        the air.
-    :fr: filling ratio (fill the 'air').
-    :a: the length of a period.
+    h: float
+        thickness of the PC slab.
+    ep: list
+        a list which contains the dielectric constant
+        of the two different layers; [small, big],
+        for example, [1.0, 4.9]
+    fr: float
+        filling ratio (fill the small dielectric constant medium).
+    a: float
+        the length of a period.
     """
     def __init__(self, epsilon,
                  fillingrate, periodlength,
                  mu=np.array([1, 1]),
                  thickness=1.0):
+        """
+        Initialize the 1D PhC slab.
+        
+        Paramters
+        ---------
+        epsilon: ndarray, dtype=float
+            a list which contains the dielectric constant
+            of the two different layers; np.array([small, big]),
+            for example, np.array([1.0, 4.9])   
+        fillingrate: float
+            filling ratio (fill the small dielectric constant medium).
+        periodlength: float
+            the length of a period.
+
+        """
         self.h = thickness
-        epsilon = np.array(epsilon)
-        self.ep = epsilon
+        self.ep = np.array(epsilon, dtype=np.float32)
         self.fr = fillingrate
         self.a = periodlength
         self.mu = mu
     
     def show(self):
         """
-        Show the PhC slab
+        Show the PhC slab in a photo.
         """
         # two rectangles' paramters
         hight = self.h / self.a
@@ -94,37 +112,34 @@ class EssentialNumber:
     Attributes:
     ------------------
     ne: int(>0)
-        number of diffraction orders(negetive)
+        number of diffraction orders(negetive).
     po: int(>0)
-        number of diffraction orders(positive)
+        number of diffraction orders(positive).
     d: int(>0)
-        number of diffraction orders
+        number of diffraction orders.
     r: int(>0)
-        number of radiation channels in air
+        number of radiation channels in air.
     listr: np.array(, dtype=np.int)
-        radiation channels orders
+        radiation channels orders.
     real: int(>0)
-        number of considered real kz for Bloch q and frequency
+        number of considered real kz.
     imag: int(>=0)
-        number of considered imag kz for Bloch q and frequency
+        number of considered imag kz.
     modes: int(>=0)
-        number of considered kz for Bloch q and frequency;
-        modes = real + imag
+        number of considered kz; modes = real + imag.
     """
     def __init__(self, n_radiation=1, nimag_plus=0,
                  n_propagation=None):
         """
-        Initialize the class
+        Initialize the essential numbers
         
         Paramters
         ---------
         n_radiation: int, optional
-            number of radiation channels in air
-            
+            number of radiation channels in air.
         nimag_plus: int, optional
             considered more imag modes,
             the more orders considered the better accurcy got.
-            
         n_propagation: None or int(=2), optional
             number of real kz for one Bloch q and frequency,
             if None: the number = n_radiation + 1
@@ -148,7 +163,8 @@ class EssentialNumber:
             self.real = n_propagation
         
         else:
-            raise ValueError("n_propagation should be None or 3 while n_radiation == 1")
+            raise ValueError("n_propagation should be None\
+                             or 3 while n_radiation == 1")
 
         if n_radiation%2:
             listr = [i - (n_radiation - 1) // 2

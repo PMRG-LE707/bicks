@@ -21,7 +21,7 @@ a = 1
 h = hset[nnu] * a
 fr = 0.5
 ep = [1.0, 4.9]
-phcs = PhotonicCrystalSlab(h, ep, fr, a)
+phcs = PhotonicCrystalSlab(ep, fr, a)
 num = EssentialNumber(n_radiation=1)
 
 k0a = k0[nnu] * 2 * np.pi
