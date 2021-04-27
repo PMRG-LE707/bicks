@@ -1,7 +1,7 @@
 from eigenkpar import find_eigen_kpar_in_an_area
 from PhotonicCrystalBandProjection import find_band_projection
 from PhotonicCrystalSlab import PhotonicCrystalSlab, EssentialNumber
-from Field import FieldsWithCTIRInAera
+from Field import FieldsWithCTIRInArea
 import numpy as np
 import time
 class FindBICs:
@@ -83,7 +83,7 @@ class FindBICs:
         
         for i in range(len(qk0)):
             qa, k0a = qk0[i]
-            temfield = FieldsWithCTIRInAera(phcs, num,
+            temfield = FieldsWithCTIRInArea(phcs, num,
                                             k0a*2*np.pi,
                                             qa*2*np.pi, kya,
                                             real_k_parallel[i],
