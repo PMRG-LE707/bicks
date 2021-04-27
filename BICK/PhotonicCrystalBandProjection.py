@@ -71,8 +71,10 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
             k0_ceiling.append(k0_ceiling1)
             dataq.append(q)
     
-    plt.plot(dataq, k0_floor, 'b', ls=':')
-    plt.plot(dataq, k0_ceiling, 'black', ls='--')
+    fig1 = plt.figure()
+    ax = fig1.add_subplot(111)
+    ax.plot(dataq, k0_floor, 'b', ls=':')
+    ax.plot(dataq, k0_ceiling, 'black', ls='--')
     plt.show()
     
     

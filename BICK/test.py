@@ -12,7 +12,7 @@ t1 = time.time()
 
 a = 1
 fr = 0.5
-ep = [1, 4.9]
+ep = [3.2, 4.9]
 phcs = PhotonicCrystalSlab(ep, fr, a)
 num = EssentialNumber(n_radiation=1)
 
