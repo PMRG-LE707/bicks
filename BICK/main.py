@@ -15,10 +15,10 @@ hset = [1.4, 2, 2.5, 3,
         1.4, 1.45, 1.375, 15.8,
         1.2, 12, 2.1, 1.97,
         1.315789, 1.105]
-BICky = [0.053, 0.044, 0]
-BICk0 = [0.597, 0.636, 0.64341]
-BICh = [1.4635, 1.375, 1.2897]
-BICq = [0, 0, 0]
+BICky = [0.053, 0.044, 0, 0, 0]
+BICk0 = [0.597, 0.636, 0.64341, 0.49824, 0.58665]
+BICh = [1.4635, 1.375, 1.2897, 2, 2]
+BICq = [0, 0, 0, 0.2264, 0.1841]
 nnu = 0
 # properties of PhC slab
 a = 1
@@ -26,7 +26,7 @@ h = BICh[nnu] * a
 fr = 0.5
 ep = [1.0, 4.9]
 phcs = PhotonicCrystalSlab(ep, fr, a,thickness=h)
-num = EssentialNumber(n_radiation=1,nimag_plus=1)
+num = EssentialNumber(n_radiation=1,nimag_plus=0)
 
 k0a = BICk0[nnu] * 2 * np.pi
 qa = BICq[nnu] * 2 * np.pi

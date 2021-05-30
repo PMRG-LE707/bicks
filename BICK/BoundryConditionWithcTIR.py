@@ -110,7 +110,7 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                 else:
                     outside_fields_tx[flag] = -(kxai**2 / kzaouti + kzaouti) / k0a * expz
                     outside_fields_ty[flag] = -kxai * kya / (k0a * kzaouti) * expz
-            
+
             even_one_row.extend(inside_field_real_part)
             even_one_row.extend(even_inside_field_imag_part)
             even_one_row.extend(outside_fields_tx)
@@ -149,6 +149,7 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                                solve_coefficents)
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1]
                              for i in range(0, 2*n_real, 2)]
+        print(coefficents)
         """
         coefs = [1]
         
