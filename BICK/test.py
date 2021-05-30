@@ -12,7 +12,7 @@ t1 = time.time()
 
 a = 1
 fr = 0.5
-ep = [3.2, 4.9]
+ep = [1, 4.9]
 phcs = PhotonicCrystalSlab(ep, fr, a)
 num = EssentialNumber(n_radiation=1)
 
@@ -21,7 +21,7 @@ fb.getcoeffs()
 
 t2 = time.time()
 print(t2 - t1)
-hstart = 1.0
-hend = 3.0
-Nh = 20
+hstart = 1.4
+hend = 1.4
+Nh = 1
 fb.run(hstart, hend, Nh)

@@ -22,11 +22,6 @@ def getcoefficents(real_fields, imag_fields,
     """
     
     if polarizationmode == "mix":
-        t1 = time.time()
-        for i in range(10 ** 3):
-            getcoemix(real_fields, imag_fields, num)
-        t2= time.time()
-        print(t2 - t1)
         return getcoemix(real_fields, imag_fields, num)
     elif polarizationmode == "single":
         return getcoesingle(real_fields, imag_fields, num)
@@ -51,8 +46,6 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
     """
     
     nd = num.d
-    nne = num.ne
-    npo = num.po
     # fields in real and imag part
     field_components = ["Ex", "Ey", "Hx", "Hy"]
     even_extend_Matrix = []
@@ -61,16 +54,18 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
     qa = real_fields[0].qa
     k0a = real_fields[0].k0a
     kya = real_fields[0].kya
+    real_kzas = np.array([field.kza[0]
+                          for field in real_fields])
     
     h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
     
-    # diffraction number
+    
     n_real = len(real_fields)
     n_imag = len(imag_fields)
     
-    # flag will growth 1 if it not in channel oder
+    # flag will growth 1 if it not in channel order
     flag = 0
-    for i in range(-nne, npo + 1, 1):
+    for i in range(-num.ne, num.po + 1, 1):
         kxai = i * 2 * np.pi + qa
         kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
         expz = np.exp(1j * kzaouti * h / 2)
@@ -101,7 +96,7 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
             outside_fields_tx = [0 for j in range(nd - 1)]
             outside_fields_ty = [0 for j in range(nd - 1)]
             
-            if i != 0:
+            if i not in num.listr:
                 if component == "Ex":
                     outside_fields_tx[flag] = -expz
                 
@@ -110,10 +105,10 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                 
                 elif component == "Hx":
                     outside_fields_tx[flag] = kxai * kya / (k0a * kzaouti) * expz
-                    outside_fields_ty[flag] = (kya ** 2 / kzaouti + kzaouti) / k0a * expz 
+                    outside_fields_ty[flag] = (kya**2 / kzaouti + kzaouti) / k0a * expz 
                 
                 else:
-                    outside_fields_tx[flag] = -(kxai ** 2 / kzaouti + kzaouti) / k0a * expz
+                    outside_fields_tx[flag] = -(kxai**2 / kzaouti + kzaouti) / k0a * expz
                     outside_fields_ty[flag] = -kxai * kya / (k0a * kzaouti) * expz
             
             even_one_row.extend(inside_field_real_part)
@@ -128,10 +123,9 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
             
             even_extend_Matrix.append(even_one_row)
             odd_extend_Matrix.append(odd_one_row)
-        if i != 0:
+        if i not in num.listr:
             flag = flag + 1
     
-    n_real *= 2
     def solve(extend_Matrix):
         """
         Give the extended matrix to get the solution.
@@ -144,13 +138,18 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
         """
         
         extend_Matrix = np.array(extend_Matrix)
-        
         coefficients_Matrix = np.delete(extend_Matrix, 
                                         constant_number, 
                                         axis=1)
         constant_vector = - extend_Matrix[:, constant_number] * 1
-        solve_coefficents = np.linalg.solve(coefficients_Matrix, constant_vector)
+        solve_coefficents = np.linalg.solve(coefficients_Matrix,
+                                            constant_vector)
         
+        coefficents = np.append(np.ones(1, dtype=complex),
+                               solve_coefficents)
+        real_coeffs_ratio = [coefficents[i] / coefficents[i+1]
+                             for i in range(0, 2*n_real, 2)]
+        """
         coefs = [1]
         
         coefs.extend(solve_coefficents[0:n_real + n_imag - 1])
@@ -165,10 +164,10 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                                n_real + n_imag - 1 + nd - 1]
         
         ty = solve_coefficents[n_real + n_imag - 1 + nd - 1:]
-
-        return (coefs, tx, ty)     
+        """
+        return real_coeffs_ratio   
     
-    return solve(even_extend_Matrix), solve(odd_extend_Matrix)
+    return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
 
 
 def getcoesingle(real_fields, imag_fields, num, constant_number=0):
@@ -286,8 +285,7 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
         
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1] 
                              for i in range(0, 2*n_real, 2)]
-
-        return real_coeffs_ratio #* expzh
+        return real_coeffs_ratio * expzh
     
     return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
 

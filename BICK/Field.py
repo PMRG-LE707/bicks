@@ -631,8 +631,7 @@ class FieldsWithCTIRSingle:
         """
         there is one more propagating modes than radiation channels.
         """
-        
-        
+
         self.phcs = phcs
         self.k0a = k0a
         self.qa = qa
@@ -644,6 +643,9 @@ class FieldsWithCTIRSingle:
         elif mode.lower() == "h":
             nHmode = num.modes
             nEmode = 0
+        elif mode.lower() == "mix":
+            nEmode = num.modes
+            nHmode = num.modes
         
         if nEmode == 0:
             Ek_real_parallel, Ek_imag_parallel = [], []
@@ -664,6 +666,18 @@ class FieldsWithCTIRSingle:
                               for kpar in Hk_real_parallel]
         H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
                               for kpar in Hk_imag_parallel]
+        if mode.lower() == "mix":
+            sw_num = 1
+            
+            sw_eigenstates = E_real_eigenstates[sw_num]
+            del E_real_eigenstates[sw_num]
+            E_imag_eigenstates.append(sw_eigenstates)
+            """
+            sw_eigenstates = H_real_eigenstates[sw_num]
+            del H_real_eigenstates[sw_num]
+            H_imag_eigenstates.append(sw_eigenstates)
+            """
+            
         
         real_eigenstates = E_real_eigenstates * 1
         real_eigenstates.extend(H_real_eigenstates)
@@ -675,8 +689,15 @@ class FieldsWithCTIRSingle:
                               for eigenstate in real_eigenstates]
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
-        even_coefs, odd_coefs, real_kzas = \
-            getcoefficents(real_fields, imag_fields, num)
+
+        if mode.lower() == "mix":
+            even_coefs, odd_coefs, real_kzas = \
+                getcoefficents(real_fields, imag_fields, num,
+                               polarizationmode="mix")
+        else:
+            even_coefs, odd_coefs, real_kzas = \
+                getcoefficents(real_fields, imag_fields, num,
+                               polarizationmode="single")
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)

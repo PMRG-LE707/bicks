@@ -145,19 +145,20 @@ class EssentialNumber:
             if None: the number = n_radiation + 1
             if 3 : the number = 3 and the n_radiation must be 1
         """
-        
+
         self.r = n_radiation
         
         if n_propagation==None:
             self.real = n_radiation + 1
-            if self.real%2:
-                self.imag = 2 + nimag_plus
-            else:
-                self.imag = 1 + nimag_plus
+            self.imag = 1 + nimag_plus
             self.modes = self.real + self.imag
             self.d = self.modes
-            self.ne = self.d // 2 
-            self.po = self.d // 2 
+            if (self.d)%2:
+                self.ne = self.d // 2 
+                self.po = self.d // 2 
+            else:
+                self.ne = self.d // 2
+                self.po = self.d // 2 - 1
                 
         elif n_propagation == 3 and n_radiation == 1:
             self.real = n_propagation
@@ -174,5 +175,7 @@ class EssentialNumber:
             listr = [i - n_radiation // 2
                      for i in range(n_radiation)]
 
-        self.listr = np.array(listr, dtype=np.int)
+        self.listr = np.array(listr, dtype=np.int) 
+        
+
 
