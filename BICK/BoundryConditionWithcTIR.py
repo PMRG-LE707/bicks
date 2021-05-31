@@ -26,7 +26,7 @@ def getcoefficents(real_fields, imag_fields,
     elif polarizationmode == "single":
         return getcoesingle(real_fields, imag_fields, num)
     else:
-        "happy"
+        return singleboundry(real_fields, imag_fields, num)
     
 
 def getcoemix(real_fields, imag_fields, num, constant_number=0):
@@ -76,7 +76,8 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
             even_one_row = []
             odd_one_row = []
             inside_field_real_part = np.array([field.field_Fourier[component] 
-                                      for field in real_fields]).flatten().tolist()
+                                      for field in real_fields])\
+                .flatten().tolist()
             
             odd_inside_field_imag_part = []
             even_inside_field_imag_part = []
@@ -104,12 +105,16 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                     outside_fields_ty[flag] = -expz
                 
                 elif component == "Hx":
-                    outside_fields_tx[flag] = kxai * kya / (k0a * kzaouti) * expz
-                    outside_fields_ty[flag] = (kya**2 / kzaouti + kzaouti) / k0a * expz 
+                    outside_fields_tx[flag] = kxai * kya / (k0a * kzaouti)\
+                        * expz
+                    outside_fields_ty[flag] = (kya**2 / kzaouti + kzaouti)\
+                        / k0a * expz 
                 
                 else:
-                    outside_fields_tx[flag] = -(kxai**2 / kzaouti + kzaouti) / k0a * expz
-                    outside_fields_ty[flag] = -kxai * kya / (k0a * kzaouti) * expz
+                    outside_fields_tx[flag] = -(kxai**2 / kzaouti + kzaouti)\
+                        / k0a * expz
+                    outside_fields_ty[flag] = -kxai * kya / (k0a * kzaouti)\
+                        * expz
 
             even_one_row.extend(inside_field_real_part)
             even_one_row.extend(even_inside_field_imag_part)
@@ -290,4 +295,107 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     
     return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
 
+def singleboundry(real_fields, imag_fields, num, constant_number=0):
+    """
+    For the mix mode(both E and H mode)
+    
+    Paramters
+    ----------
+    :fields: a list of lenth 4, it contains incident and
+        reflected fields with real kz and imag kz, respectively.
+    :nne: negative diffraction oders
+    :npo: positive diffraction oders
+    :constant_number: the serial number of columm which is 
+        constant in eqs.
+    :return: the coefficents of different eigenstates in two
+        kinds(even or odd for E mode)
+    """
+    
+    nd = num.d
+    # fields in real and imag part
+    field_components = ["Ex", "Ey", "Hx", "Hy"]
+    extend_Matrix = []
+    
+    qa = real_fields[0].qa
+    k0a = real_fields[0].k0a
+    kya = real_fields[0].kya
+  
+    h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
+    
+    # flag will growth 1 if it not in channel order
+    flag = 0
+    for i in range(-num.ne, num.po + 1, 1):
+        kxai = i * 2 * np.pi + qa
+        kzaouti = np.sqrt(k0a ** 2 - kxai ** 2 - kya ** 2 + 0j)
+        expz = np.exp(1j * kzaouti * h / 2)
+        [field.fieldfc(i, field_components) for field in real_fields]
+        [field.fieldfc(i, field_components) for field in imag_fields]
+        for component in field_components:
+            # one row in extended matrix
+            one_row = []
+            inside_field_real_part = np.array([field.field_Fourier[component] 
+                                      for field in real_fields])\
+                .flatten().tolist()
+            inside_field_imag_part = np.array([field.field_Fourier[component][1] 
+                                      for field in imag_fields])
+            
+            
+            outside_fields_tx = [0 for j in range(nd - 1)]
+            outside_fields_ty = [0 for j in range(nd - 1)]
+            
+            if i not in num.listr:
+                if component == "Ex":
+                    outside_fields_tx[flag] = -expz
+                
+                elif component == "Ey":
+                    outside_fields_ty[flag] = -expz
+                
+                elif component == "Hx":
+                    outside_fields_tx[flag] = kxai * kya / (k0a * kzaouti)\
+                        * expz
+                    outside_fields_ty[flag] = (kya**2 / kzaouti + kzaouti)\
+                        / k0a * expz 
+                
+                else:
+                    outside_fields_tx[flag] = -(kxai**2 / kzaouti + kzaouti)\
+                        / k0a * expz
+                    outside_fields_ty[flag] = -kxai * kya / (k0a * kzaouti)\
+                        * expz
 
+            one_row.extend(inside_field_real_part)
+            one_row.extend(inside_field_imag_part)
+            one_row.extend(outside_fields_tx)
+            one_row.extend(outside_fields_ty)
+
+            extend_Matrix.append(one_row)
+        if i not in num.listr:
+            flag = flag + 1
+    
+    def solve(extend_Matrix):
+        """
+        Give the extended matrix to get the solution.
+        
+        Paramters
+        ---------------
+        :extend_Matrix: extend matrix provided by the eqs
+        :return: the coefficients of the fields in the PhCs and
+            tx and ty
+        """
+        
+        extend_Matrix = np.array(extend_Matrix)
+        coefficients_Matrix = np.delete(extend_Matrix, 
+                                        constant_number, 
+                                        axis=1)
+        constant_vector = - extend_Matrix[:, constant_number] * 1
+        solve_coefficents = np.linalg.solve(coefficients_Matrix,
+                                            constant_vector)
+        
+        coefficents = np.append(np.ones(1, dtype=complex),
+                               solve_coefficents)
+        print(coefficents[1])
+
+        return coefficents[1]   
+    
+    return solve(extend_Matrix)
+
+    

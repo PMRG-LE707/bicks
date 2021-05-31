@@ -1,9 +1,8 @@
 from eigenkpar import find_eigen_kpar_in_an_area
 from PhotonicCrystalBandProjection import find_band_projection
-from PhotonicCrystalSlab import PhotonicCrystalSlab, EssentialNumber
 from Field import FieldsWithCTIRInArea
 import numpy as np
-import time
+
 class FindBICs:
     """
     find BICs in q-k0 space
@@ -72,7 +71,50 @@ class FindBICs:
         self.num = num
         self.real_k_parallel = real_k_parallel
         self.imag_k_parallel = imag_k_parallel
-    
+    def find_kpar(self, mode, Nq):
+        phcs = self.phcs
+        num = self.num
+        deltaq = 0.5/Nq
+        k0_floor, k0_ceiling, dataq, band_proj = \
+            find_band_projection(phcs, num, mode=mode, Nq=Nq)
+        datak0 = band_proj["k0a"]
+        kpara_real_range_origin = band_proj["real"]
+        kpara_imag_range_origin = band_proj["imag"]
+        
+        #gridding
+        real_k_parallel, imag_k_parallel, qk0 = [], [], []
+        for i in range(len(dataq)):
+            qa = i * deltaq + dataq[0]
+            # this is the area in which Bloch waves' kz(real and image) will be found
+            kpara_real_range = []
+            kpara_imag_range = []
+            # this is the range of considered frequency 
+            k0_range = []
+            
+            for j in range(len(datak0)):
+                datak0j = datak0[j]
+                if k0_floor[i] <= datak0j <= k0_ceiling[i]:
+                    k0_range.append(datak0j)
+                    kpara_real_range.append(
+                        kpara_real_range_origin[j])
+                    kpara_imag_range.append(
+                        kpara_imag_range_origin[j])
+            # compute the data     
+            for k in range(len(k0_range)):
+                k0a = k0_range[k]
+                kpara_real_extreme = kpara_real_range[k]
+                kpara_imag_extreme = kpara_imag_range[k]
+                tem_real_k_parallel, tem_imag_k_parallel = \
+                    find_eigen_kpar_in_an_area(phcs, qa*2*np.pi,
+                                               k0a*2*np.pi, num,
+                                               kpara_real_extreme,
+                                               kpara_imag_extreme,
+                                               mode=mode)
+                real_k_parallel.append(tem_real_k_parallel)
+                imag_k_parallel.append(tem_imag_k_parallel)
+                qk0.append([qa, k0a])
+              
+        return qk0, real_k_parallel, imag_k_parallel
     def getcoeffs(self):
         qk0 = self.qk0
         phcs, num = self.phcs, self.num
@@ -110,7 +152,8 @@ class FindBICs:
             """
             This is a function to find bics in PhCS
             --------------------------------
-            :param h: the thickness of PhCS
+            h: int
+                the thickness of PhCS
             return: the coordinate(q, k0) of bics
             """
             test = []

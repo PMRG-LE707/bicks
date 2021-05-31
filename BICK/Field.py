@@ -41,7 +41,9 @@ class BulkEigenStates:
         newphcs.ep = ep
         fr = phcs.fr
         # ky * a in the homogeneous medium(2 layers)
-        kxa_ho_med = np.array([np.sqrt(mu[j] * ep[j] * (k0a) ** 2 - kpar ** 2 + 0j) for j in range(2)])
+        kxa_ho_med = np.array([np.sqrt(mu[j] * ep[j] * (k0a) ** 2
+                                       - kpar ** 2 + 0j)
+                               for j in range(2)])
         
         eta1 = (kxa_ho_med[1] / kxa_ho_med[0]) * (mu[0] / mu[1])
         eta2 = 1 / eta1
@@ -58,7 +60,9 @@ class BulkEigenStates:
         pdd = np.dot(pd1, d12)
         pddpd2 = np.dot(pdd, pd2)
         m = np.dot(pddpd2, d21)  
-        inverspdd = np.array([[pdd[1, 1], -pdd[0, 1]], [-pdd[1, 0], pdd[0, 0]]])/(-pdd[0, 1] * pdd[1, 0] + pdd[0, 0] * pdd[1, 1])
+        inverspdd = np.array([[pdd[1, 1], -pdd[0, 1]],
+                              [-pdd[1, 0], pdd[0, 0]]])\
+            /(-pdd[0, 1] * pdd[1, 0] + pdd[0, 0] * pdd[1, 1])
         a0 = 1
         b0 = (1 - eigenvalue * m[0, 0]) / (eigenvalue * m[0, 1])
         c0 = a0 * inverspdd[0, 0] + b0 * inverspdd[0, 1]
@@ -78,18 +82,24 @@ class BulkEigenStates:
     
     def u(self, xra):
         if xra < (1 - self.phcs.fr):
-            output = self.a0 * np.exp(1j * self.kxa[0] * xra) + self.b0 * np.exp(-1j * self.kxa[0] * xra)
+            output = self.a0 * np.exp(1j * self.kxa[0] * xra)\
+                + self.b0 * np.exp(-1j * self.kxa[0] * xra)
         else:
             nxra = xra - (1 - self.phcs.fr)
-            output = self.c0 * np.exp(1j * self.kxa[1] * nxra) + self.d0 * np.exp(-1j * self.kxa[1] * nxra)
+            output = self.c0 * np.exp(1j * self.kxa[1] * nxra)\
+                + self.d0 * np.exp(-1j * self.kxa[1] * nxra)
         return output * np.exp(-1j * self.qa * xra) / self.normalization
     
     def w(self, xra):
         if xra < (1 - self.phcs.fr):
-            output = self.kxa[0] / self.phcs.mu[0] * (self.a0 * np.exp(1j * self.kxa[0] * xra) - self.b0 * np.exp(-1j * self.kxa[0] * xra))
+            output = self.kxa[0] / self.phcs.mu[0]\
+                * (self.a0 * np.exp(1j * self.kxa[0] * xra) - 
+                   self.b0 * np.exp(-1j * self.kxa[0] * xra))
         else:
             nxra = xra - (1 - self.phcs.fr)
-            output = self.kxa[1] / self.phcs.mu[1] * (self.c0 * np.exp(1j * self.kxa[1] * nxra) - self.d0 * np.exp(-1j * self.kxa[1] * nxra))
+            output = self.kxa[1] / self.phcs.mu[1]\
+                * (self.c0 * np.exp(1j * self.kxa[1] * nxra) - 
+                   self.d0 * np.exp(-1j * self.kxa[1] * nxra))
         return output * np.exp(-1j * self.qa * xra) / self.normalization
     
     def v(self, xra):
@@ -111,8 +121,12 @@ class BulkEigenStates:
         kd = -i * 2 * np.pi - kxa[1] - qa
         Aa = -1j * self.a0 / ka * (np.exp(1j * (1 - fr) * ka) - 1)
         Ab = -1j * self.b0 / kb * (np.exp(1j * (1 - fr) * kb) - 1)
-        Ac = -1j * self.c0 / kc * (np.exp(1j * kc) - np.exp(1j * (1 - fr) * kc)) * np.exp(-1j * kxa[1] * (1 - fr))
-        Ad = -1j * self.d0 / kd * (np.exp(1j * kd) - np.exp(1j * (1 - fr) * kd)) * np.exp(1j * kxa[1] * (1 - fr))
+        Ac = -1j * self.c0 / kc * (np.exp(1j * kc) -
+                                   np.exp(1j * (1 - fr) * kc))\
+            * np.exp(-1j * kxa[1] * (1 - fr))
+        Ad = -1j * self.d0 / kd * (np.exp(1j * kd) - 
+                                   np.exp(1j * (1 - fr) * kd))\
+            * np.exp(1j * kxa[1] * (1 - fr))
         A = Aa + Ab + Ac + Ad
         B = kxa[0] / mu[0] * (Aa - Ab) + kxa[1]  / mu[1] * (Ac - Ad)
         C = 1 / mu[0] * (Aa + Ab) + 1 / mu[1] * (Ac + Ad)
@@ -192,7 +206,8 @@ class TotalFieldInPhcS:
         for i in range(n_x):
             # energy flow density
             x = i * delta_x
-            Sz = np.real(self.Ex(x, z) * np.conj(self.Hy(x, z)) - self.Ey(x, z) * np.conj(self.Hx(x, z)))
+            Sz = np.real(self.Ex(x, z) * np.conj(self.Hy(x, z)) -
+                         self.Ey(x, z) * np.conj(self.Hx(x, z)))
             EF = EF + Sz * delta_x
             return EF
         
@@ -225,14 +240,17 @@ class TotalFieldInPhcS:
         zz = np.arange(-Nz, Nz + 1) * (1 / (2 * Nx))
         oprator = eval("np." + oprator)
         fieldcomponent = eval("self." + fieldcomponent)
-        value = oprator(np.array([[fieldcomponent(x, z) for x in xx] for z in zz]))
+        value = oprator(np.array([[fieldcomponent(x, z)
+                                   for x in xx]
+                                  for z in zz]))
         
         profile = ax1.imshow(value, cmap='RdBu', 
                          interpolation='none', 
                          extent=[0, 1, hight * 0.5, -hight * 0.5])
         
         fig.colorbar(profile, extend='both')
-        ax1.plot([1 - fr, 1 - fr], [-hight / 2, hight / 2], color="Black", linestyle='dashed') 
+        ax1.plot([1 - fr, 1 - fr], [-hight / 2, hight / 2],
+                 color="Black", linestyle='dashed') 
         
         # plot the arrow and delectric constants
         txtname = ['$\epsilon_{1} = ' + str(ep[0]) + '$',
@@ -296,7 +314,8 @@ class FieldInPhcS:
         if self.mode == "E":
             output = 0
         else:
-            output = -es.v(x) * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
+            output = -es.v(x) * np.exp(1j * kza * z)\
+                * (kya ** 2 / kza + kza) / k0a
         return output * np.exp(1j * qa * x)
     
     def Ey(self, x, z, kzdirection=0):
@@ -320,7 +339,8 @@ class FieldInPhcS:
         if es.mode == "H":
             output = 0
         else:
-            output = -es.v(x) * np.exp(1j * kza * z) * (kya ** 2 / kza + kza) / k0a
+            output = -es.v(x) * np.exp(1j * kza * z)\
+                * (kya ** 2 / kza + kza) / k0a
         return output * np.exp(1j * qa * x)
     
        
@@ -407,14 +427,17 @@ class FieldInPhcS:
         zz = np.arange(-Nz, Nz + 1) * (1 / (2 * Nx))
         oprator = eval("np." + oprator)
         fieldcomponent = eval("self." + fieldcomponent)
-        value = oprator(np.array([[fieldcomponent(x, z) for x in xx] for z in zz]))
+        value = oprator(np.array([[fieldcomponent(x, z) 
+                                   for x in xx]
+                                  for z in zz]))
         
         profile = ax1.imshow(value, cmap='RdBu', 
                          interpolation='none', 
                          extent=[0, 1, hight * 0.5, -hight * 0.5])
         
         fig.colorbar(profile, extend='both')
-        ax1.plot([1 - fr, 1 - fr], [-hight / 2, hight / 2], color="Black", linestyle='dashed') 
+        ax1.plot([1 - fr, 1 - fr], [-hight / 2, hight / 2],
+                 color="Black", linestyle='dashed') 
         
         # plot the arrow and delectric constants
         txtname = ['$\epsilon_{1} = ' + str(ep[0]) + '$',
@@ -518,7 +541,8 @@ class FiledsInAir:
                 expz = np.exp(1j * kzaouti * z)
                 expx = np.exp(1j * kxai * x)
                 sumHx = sumHx - (tx[k] * kxai * kya / kzaouti + 
-                                 ty[k] * (kya ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+                                 ty[k] * (kya ** 2 / kzaouti + kzaouti))\
+                    / k0a * expz * expx
                 k = k + 1
         return sumHx
     
@@ -539,7 +563,8 @@ class FiledsInAir:
                 expz = np.exp(1j * kzaouti * z)
                 expx = np.exp(1j * kxai * x)
                 sumHy = sumHy + (ty[k] * kxai * kya / kzaouti + 
-                                 tx[k] * (kxai ** 2 / kzaouti + kzaouti)) / k0a * expz * expx
+                                 tx[k] * (kxai ** 2 / kzaouti + kzaouti))\
+                    / k0a * expz * expx
                 k = k + 1
         return sumHy
         
@@ -603,7 +628,8 @@ class FieldsWithCTIR:
                               for eigenstate in imag_eigenstates]
         
         fields = [real_fields, imag_fields] 
-        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] = getcoefficents(fields, nne, npo)
+        [even_coefs, even_tx, even_ty], [odd_coefs, odd_tx, odd_ty] \
+            = getcoefficents(fields, nne, npo)
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
@@ -668,15 +694,10 @@ class FieldsWithCTIRSingle:
                               for kpar in Hk_imag_parallel]
         if mode.lower() == "mix":
             sw_num = 1
-            
-            sw_eigenstates = E_real_eigenstates[sw_num]
-            del E_real_eigenstates[sw_num]
-            E_imag_eigenstates.append(sw_eigenstates)
-            """
             sw_eigenstates = H_real_eigenstates[sw_num]
             del H_real_eigenstates[sw_num]
             H_imag_eigenstates.append(sw_eigenstates)
-            """
+            
             
         
         real_eigenstates = E_real_eigenstates * 1
@@ -786,4 +807,54 @@ class FieldsWithCTIRInArea:
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
         self.realkzs = real_kzas
-     
+
+class testCTIR:
+    
+    def __init__(self, phcs, num,
+                 k0a, qa, kya):
+        """
+        there is one more propagating modes than radiation channels.
+        """
+
+        self.phcs = phcs
+        self.k0a = k0a
+        self.qa = qa
+        self.kya = kya
+        
+        nEmode = num.modes
+        nHmode = num.modes - 1
+        if nEmode == 0:
+            Ek_real_parallel, Ek_imag_parallel = [], []
+        else:
+            Ek_real_parallel, Ek_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+                                                             nEmode, mode="E")
+        if nHmode == 0:
+            Hk_real_parallel, Hk_imag_parallel = [], []
+        else:
+            Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
+                                                             nHmode, mode="H")
+        E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_real_parallel]
+        E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
+                              for kpar in Ek_imag_parallel]
+        
+        H_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_real_parallel]
+        H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
+                              for kpar in Hk_imag_parallel]
+
+        real_eigenstates = E_real_eigenstates * 1
+        real_eigenstates.extend(H_real_eigenstates)
+        
+        imag_eigenstates = E_imag_eigenstates * 1
+        imag_eigenstates.extend(H_imag_eigenstates)
+        
+        real_fields = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in real_eigenstates]
+        imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
+                              for eigenstate in imag_eigenstates]
+        coefs = getcoefficents(real_fields, imag_fields, num,
+                               polarizationmode="test")
+        
+        self.coefs_inside = np.array(coefs)
+       
