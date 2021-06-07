@@ -94,8 +94,8 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                     odd_inside_field_imag_part.append(in_field + re_field)
                     even_inside_field_imag_part.append(in_field - re_field)
                 
-            outside_fields_tx = [0 for j in range(nd - 1)]
-            outside_fields_ty = [0 for j in range(nd - 1)]
+            outside_fields_tx = [0 for j in range(nd - len(num.listr))]
+            outside_fields_ty = [0 for j in range(nd - len(num.listr))]
             
             if i not in num.listr:
                 if component == "Ex":
@@ -244,7 +244,7 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
                     even_inside_field_imag_part.append(in_field - re_field)
                 
          
-            outside_fields_t = [0 for j in range(nd - num.r)]
+            outside_fields_t = [0 for j in range(nd - len(num.listr))]
             
             if i not in num.listr:
                 if component == "Ey" or component == "Hy":
