@@ -48,7 +48,7 @@ class PhotonicCrystalSlab:
     
     def show(self):
         """
-        Show the PhC slab in a photo.
+        Show the PhC slab in a picture.
         """
         # two rectangles' paramters
         hight = self.h / self.a

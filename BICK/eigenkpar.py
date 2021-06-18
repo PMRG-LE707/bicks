@@ -1,8 +1,6 @@
 import numpy as np
 from MathTool import find_real_roots_for_small_and_big_q, find_n_roots_for_small_and_big_q, find_real_roots
 from MathTool import dichotomy
-from PhotonicCrystalBandProjection import find_band_projection
-import time
 
 def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     """
