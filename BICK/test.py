@@ -21,7 +21,7 @@ fb.getcoeffs()
 
 t2 = time.time()
 print(t2 - t1)
-hstart = 1.4
-hend = 1.4
-Nh = 1
+hstart = 1.2
+hend = 2.5
+Nh = 100
 fb.run(hstart, hend, Nh)

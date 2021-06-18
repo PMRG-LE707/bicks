@@ -160,22 +160,42 @@ class EssentialNumber:
                 self.ne = self.d // 2
                 self.po = self.d // 2 - 1
                 
+            if n_radiation%2:
+                listr = [i - (n_radiation - 1) // 2
+                         for i in range(n_radiation)]
+            else:
+                listr = [i - n_radiation // 2
+                         for i in range(n_radiation)]
+    
+            self.listr = np.array(listr, dtype=np.int) 
+                
         elif n_propagation == 3 and n_radiation == 1:
             self.real = n_propagation
+            self.imag = 1 + nimag_plus
+            self.modes = self.real + self.imag
+            self.d = self.modes
+            if (self.d)%2:
+                self.ne = self.d // 2 
+                self.po = self.d // 2 
+            else:
+                self.ne = self.d // 2
+                self.po = self.d // 2 - 1
+                
+            if n_radiation%2:
+                listr = [i - (n_radiation - 1) // 2
+                         for i in range(n_radiation)]
+            else:
+                listr = [i - n_radiation // 2
+                         for i in range(n_radiation)]
+            listr.append(-1)
+            self.listr = np.array(listr, dtype=np.int)
+            
         
         else:
             raise ValueError("n_propagation should be None\
                              or 3 while n_radiation == 1")
 
-        if n_radiation%2:
-            listr = [i - (n_radiation - 1) // 2
-                     for i in range(n_radiation)]
         
-        else:
-            listr = [i - n_radiation // 2
-                     for i in range(n_radiation)]
-
-        self.listr = np.array(listr, dtype=np.int) 
         
 
 

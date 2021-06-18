@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import copy
 from BoundryConditionWithcTIR import getcoefficents
 from eigenkpar import find_eigen_kpar
-import time
 
 
 class BulkEigenStates:
@@ -19,11 +18,11 @@ class BulkEigenStates:
         phcs: PhotonicCrystalSlab
             the Photonic Crystal Slab which is a kind of class.
         k0a: float
-            the frequency divided by (2pi*c)
+            the wave number
         kpar: complex
             the k_parallel of Bloch mode
         qa: float
-            the Bloch wave q * a
+            the Bloch wave number q * a
         mode: {"E", "H"}, optional
             the mode of the eigenstate
         normalization: complex, optional
