@@ -22,9 +22,10 @@ class PhotonicCrystalSlab:
         the length of a period.
     """
     def __init__(self, epsilon,
-                 fillingrate, periodlength,
+                 fillingrate,
                  mu=np.array([1, 1]),
-                 thickness=1.0):
+                 thickness=1.0,
+                 periodlength=1):
         """
         Initialize the 1D PhC slab.
         
