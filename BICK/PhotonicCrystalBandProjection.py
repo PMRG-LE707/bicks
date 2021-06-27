@@ -43,7 +43,6 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
     mu0, mu1 = mu
     ep0, ep1 = ep  
     for ii in range(Nq - 1):
-        
         q = (ii + 1) * deltaq
         qa = q * 2 * np.pi * a
         # dispersion relation of 1D PhC with kz=0
@@ -135,3 +134,70 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
     band_proj["imag"] = kpara_imag_proj
 
     return k0_floor, k0_ceiling, dataq, band_proj
+
+def mini_frequncy(phcs, num, qa, deltak0):
+    """
+    Find the floor of frequncy range for a specific q where the number of real
+    k is a constant which is a paramter.
+    
+    Paramters:
+    ----------
+    phcs: PhotonicCrystalSlab
+    num: EssentialNumber
+    
+    Returns
+    -------
+    k0_floor: np.ndarray
+        the floor of range of k0 where the number of real k is a constant.
+    """
+    a = phcs.a
+    fr = phcs.fr
+    ep = phcs.ep
+    mu = phcs.mu
+    q = qa/(2*np.pi)
+    def find_k0_floor(ep, mu):
+        muep = mu * ep
+        mu0, mu1 = mu
+        ep0, ep1 = ep
+        def f_kza0(k0):
+            k0a = k0 * a
+            kxa = np.sqrt(muep + 0j) * k0a 
+            kxa0, kxa1 = kxa
+            eta = (kxa1 * mu0) / (kxa0 * mu1)
+            output = np.cos(qa) - np.cos(kxa0 * (1 - fr)) * np.cos(kxa1 * fr) +\
+                0.5 * (eta + 1 / eta) * np.sin(kxa0 * (1 - fr)) * np.sin(kxa1 * fr)
+            return output.real
+        # the k0 region of n_propagation progating modes and n_radiatoin
+        k0_start = find_n_roots_for_small_and_big_q(f_kza0, qa, num.real+1, gox=1.0e-10, peak1=1.0e-10)
+        if num.r % 2:
+            k0_floor = np.max([k0_start[-1] / (2 * np.pi), q + (num.r - 1) / 2]) + deltak0
+        else:
+            k0_floor = np.max([k0_start[-1] / (2 * np.pi), num.r / 2 - q]) + deltak0
+        print(k0_start)
+        print(f_kza0(k0_start[0]))
+        print(f_kza0(k0_start[1]))
+        return k0_floor
+    k0_floor1 = find_k0_floor(ep, mu)
+    k0_floor2 = find_k0_floor(-mu, -ep)
+    
+    k0_floor = max([k0_floor1, k0_floor2])
+    return k0_floor1, k0_floor2
+
+def ky_k0_space(mink0, maxk0, q, phcs, num):
+    def r_range(i, ky):
+        if i%2:
+            value_k0 = np.sqrt((q + (num.r - 1) / 2)**2 + ky**2)
+        else:
+            value_k0 = np.sqrt((num.r / 2 - q)**2 + ky**2)
+        return value_k0
+    xvalue = np.linspace(0,2)
+    ni = 2
+    yvalue1 = r_range(ni, xvalue)
+    yvalue2 = r_range(ni+1,xvalue)
+    fig1 = plt.figure()
+    ax = fig1.add_subplot(111)
+    ax.plot(xvalue, yvalue1, 'b', ls=':')
+    ax.plot(xvalue, yvalue2, 'black', ls='--')
+    plt.show()
+    return 0
+

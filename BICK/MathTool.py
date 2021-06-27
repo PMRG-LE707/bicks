@@ -88,9 +88,11 @@ def find_n_roots_for_small_and_big_q(f, qa, n, gox=0, deltax=0.024, eps=1.0e-10,
                 gox = gox + deltax
             b = gox
             peak2 = golden_section(nf, a, b, epsilon=eps)
-            if(f(peak1) * f(peak2)) <= 1.0e-10:
-                root.append(dichotomy(f, peak1, peak2, epsilon=eps))
-                currentroot = currentroot + 1
+            if(f(peak1) * f(peak2)) <= eps:
+                mayberoot = dichotomy(f, peak1, peak2, epsilon=eps)
+                if abs(f(mayberoot)) <= eps:
+                    root.append(mayberoot)
+                    currentroot = currentroot + 1
             peak1 = peak2
         gox = gox + deltax
     return root
@@ -119,7 +121,8 @@ def find_real_roots_for_small_and_big_q(f, qa, deltax=0.024, eps=1.0e-10):
             peak2 = golden_section(nf, a, b, epsilon=eps)
 
             if(f(peak1) * f(peak2)) <= 1.0e-8:
-                root.append(dichotomy(f, peak1, peak2, epsilon=eps))
+                mayberoot = dichotomy(f, peak1, peak2, epsilon=eps)
+                root.append(mayberoot)
                 peak1 = peak2
         gox = gox + deltax
         absnf = abs(nf(gox))

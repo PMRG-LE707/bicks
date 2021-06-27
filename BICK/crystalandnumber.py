@@ -29,8 +29,8 @@ class PhotonicCrystalSlab:
         """
         Initialize the 1D PhC slab.
         
-        Paramters
-        ---------
+        Paramters:
+        ----------
         epsilon: ndarray, dtype=float
             a list which contains the dielectric constant
             of the two different layers; np.array([small, big]),
@@ -111,7 +111,7 @@ class EssentialNumber:
     Some essential number of modes or orders.
 
     Attributes:
-    ------------------
+    -----------
     ne: int(>0)
         number of diffraction orders(negetive).
     po: int(>0)
@@ -130,73 +130,55 @@ class EssentialNumber:
         number of considered kz; modes = real + imag.
     """
     def __init__(self, n_radiation=1, nimag_plus=0,
-                 n_propagation=None):
+                 n_propagation=0):
         """
         Initialize the essential numbers
         
-        Paramters
-        ---------
+        Paramters:
+        ----------
         n_radiation: int, optional
             number of radiation channels in air.
         nimag_plus: int, optional
             considered more imag modes,
             the more orders considered the better accurcy got.
-        n_propagation: None or int(=2), optional
+        n_propagation: int, optional
             number of real kz for one Bloch q and frequency,
-            if None: the number = n_radiation + 1
-            if 3 : the number = 3 and the n_radiation must be 1
+            the number is 1 more than n_radiation or 3 while 
+            n_radiation is 1.
         """
 
         self.r = n_radiation
         
-        if n_propagation==None:
-            self.real = n_radiation + 1
-            self.imag = 1 + nimag_plus
-            self.modes = self.real + self.imag
-            self.d = self.modes
-            if (self.d)%2:
-                self.ne = self.d // 2 
-                self.po = self.d // 2 
-            else:
-                self.ne = self.d // 2
-                self.po = self.d // 2 - 1
-                
-            if n_radiation%2:
-                listr = [i - (n_radiation - 1) // 2
-                         for i in range(n_radiation)]
-            else:
-                listr = [i - n_radiation // 2
-                         for i in range(n_radiation)]
+        if n_propagation==0:
+            n_propagation = n_radiation + 1
+        
+        self.real = n_propagation
+        self.imag = 1 + nimag_plus
+        self.modes = self.real + self.imag
+        self.d = self.modes
+        if (self.d)%2:
+            self.ne = self.d // 2 
+            self.po = self.d // 2 
+        else:
+            self.ne = self.d // 2
+            self.po = self.d // 2 - 1
+            
+        if n_radiation%2:
+            listr = [i - (n_radiation - 1) // 2
+                     for i in range(n_radiation)]
+        else:
+            listr = [i - n_radiation // 2
+                     for i in range(n_radiation)]
     
+        if n_propagation-n_radiation==1:
+            
             self.listr = np.array(listr, dtype=np.int) 
                 
         elif n_propagation == 3 and n_radiation == 1:
-            self.real = n_propagation
-            self.imag = 1 + nimag_plus
-            self.modes = self.real + self.imag
-            self.d = self.modes
-            if (self.d)%2:
-                self.ne = self.d // 2 
-                self.po = self.d // 2 
-            else:
-                self.ne = self.d // 2
-                self.po = self.d // 2 - 1
-                
-            if n_radiation%2:
-                listr = [i - (n_radiation - 1) // 2
-                         for i in range(n_radiation)]
-            else:
-                listr = [i - n_radiation // 2
-                         for i in range(n_radiation)]
             listr.append(-1)
             self.listr = np.array(listr, dtype=np.int)
             
         
         else:
-            raise ValueError("n_propagation should be None\
-                             or 3 while n_radiation == 1")
-
-        
-        
-
-
+            raise ValueError("n_propagation should be 1 more than n_radiationor or 3 while n_radiation == 1")
+            

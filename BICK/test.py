@@ -4,23 +4,14 @@ Created on Mon Apr 19 15:29:16 2021
 
 @author: CWXie
 """
-from crystalandnumber.py import PhotonicCrystalSlab, EssentialNumber
+from PhotonicCrystalBandProjection import mini_frequncy
+from crystalandnumber import PhotonicCrystalSlab, EssentialNumber
 from bicky import FindBICs
-import time
-
-t1 = time.time()
+from eigenkpar import find_eigen_kpar
 
 fr = 0.5
 ep = [1, 4.9]
 phcs = PhotonicCrystalSlab(ep, fr)
 num = EssentialNumber(n_radiation=1)
 
-fb = FindBICs(phcs, num)
-fb.getcoeffs()
-
-t2 = time.time()
-print(t2 - t1)
-hstart = 1.2
-hend = 2.5
-Nh = 100
-fb.run(hstart, hend, Nh)
+k0f = mini_frequncy(phcs, num, 0, 0.01)

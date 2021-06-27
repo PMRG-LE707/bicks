@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import time
 
 def getcoefficents(real_fields, imag_fields,
                    num, polarizationmode="single"):
@@ -11,13 +10,18 @@ def getcoefficents(real_fields, imag_fields,
     
     Paramters
     ----------
-    :fields: a list of lenth 4, it contains incident and
+    fields: 
+        a list of lenth 4, it contains incident and
         reflected fields with real kz and imag kz, respectively.
-    :nne: negative diffraction oders.
-    :npo: positive diffraction oders.
-    :polarizationmode: "mix" or "single", if the mode is H 
+    nne:
+        negative diffraction oders.
+    npo: 
+        positive diffraction oders.
+    polarizationmode: 
+        "mix" or "single", if the mode is H 
         or E mode only, key the "single", if both, key the "mix"
-    :return: the coefficents of different eigenstates in two
+    return: 
+         the coefficents of different eigenstates in two
         kinds(even or odd for E mode)
     """
     
