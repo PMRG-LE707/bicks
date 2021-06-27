@@ -330,11 +330,11 @@ class FieldInPhcS:
         plt.show()
         return
      
-class FieldsWithCTIR:
+class FieldsWithCTIRMix:
     
     def __init__(self, phcs, num,
                  k0a, qa, kya,
-                 mode="E"):
+                 kpe, kph):
         """
         there is one more propagating modes than radiation channels.
         """
@@ -344,26 +344,10 @@ class FieldsWithCTIR:
         self.qa = qa
         self.kya = kya
         
-        if mode.lower() == "e":
-            nEmode = num.modes
-            nHmode = 0
-        elif mode.lower() == "h":
-            nHmode = num.modes
-            nEmode = 0
-        elif mode.lower() == "mix":
-            nEmode = num.modes
-            nHmode = num.modes
-        
-        if nEmode == 0:
-            Ek_real_parallel, Ek_imag_parallel = [], []
-        else:
-            Ek_real_parallel, Ek_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
-                                                             nEmode, mode="E")
-        if nHmode == 0:
-            Hk_real_parallel, Hk_imag_parallel = [], []
-        else:
-            Hk_real_parallel, Hk_imag_parallel = find_eigen_kpar(phcs, k0a, qa, 
-                                                             nHmode, mode="H")
+        Ek_real_parallel = kpe[0]
+        Ek_imag_parallel = kpe[1]
+        Hk_real_parallel = kph[0]
+        Hk_imag_parallel = kph[1]
         E_real_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
                               for kpar in Ek_real_parallel]
         E_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="E") 
@@ -373,13 +357,10 @@ class FieldsWithCTIR:
                               for kpar in Hk_real_parallel]
         H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
                               for kpar in Hk_imag_parallel]
-        if mode.lower() == "mix":
-            sw_num = 1
-            sw_eigenstates = H_real_eigenstates[sw_num]
-            del H_real_eigenstates[sw_num]
-            H_imag_eigenstates.append(sw_eigenstates)
-            
-            
+        sw_num = 1
+        sw_eigenstates = H_real_eigenstates[sw_num]
+        del H_real_eigenstates[sw_num]
+        H_imag_eigenstates.append(sw_eigenstates)
         
         real_eigenstates = E_real_eigenstates * 1
         real_eigenstates.extend(H_real_eigenstates)
@@ -391,19 +372,15 @@ class FieldsWithCTIR:
                               for eigenstate in real_eigenstates]
         imag_fields = [FieldInPhcS(eigenstate, kya=kya) 
                               for eigenstate in imag_eigenstates]
-
-        if mode.lower() == "mix":
-            even_coefs, odd_coefs, real_kzas = \
-                getcoefficents(real_fields, imag_fields, num,
-                               polarizationmode="mix")
-        else:
-            even_coefs, odd_coefs, real_kzas = \
-                getcoefficents(real_fields, imag_fields, num,
-                               polarizationmode="single")
+        
+        even_coefs, odd_coefs, real_kzas = \
+            getcoefficents(real_fields, imag_fields, num,
+                           polarizationmode="mix")
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
         self.realkzs = real_kzas
+        
 
 class FieldsWithCTIRInArea:
     """

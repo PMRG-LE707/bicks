@@ -154,7 +154,7 @@ def mini_frequncy(phcs, num, qa, deltak0):
     fr = phcs.fr
     ep = phcs.ep
     mu = phcs.mu
-    q = qa/(2*np.pi)
+    q = qa/(2*np.pi)    
     def find_k0_floor(ep, mu):
         muep = mu * ep
         mu0, mu1 = mu
@@ -168,20 +168,18 @@ def mini_frequncy(phcs, num, qa, deltak0):
                 0.5 * (eta + 1 / eta) * np.sin(kxa0 * (1 - fr)) * np.sin(kxa1 * fr)
             return output.real
         # the k0 region of n_propagation progating modes and n_radiatoin
-        k0_start = find_n_roots_for_small_and_big_q(f_kza0, qa, num.real+1, gox=1.0e-10, peak1=1.0e-10)
+        k0_start = find_n_roots_for_small_and_big_q(f_kza0, qa, num.real, gox=1.0e-10, peak1=1.0e-10)
         if num.r % 2:
             k0_floor = np.max([k0_start[-1] / (2 * np.pi), q + (num.r - 1) / 2]) + deltak0
         else:
             k0_floor = np.max([k0_start[-1] / (2 * np.pi), num.r / 2 - q]) + deltak0
-        print(k0_start)
-        print(f_kza0(k0_start[0]))
-        print(f_kza0(k0_start[1]))
         return k0_floor
     k0_floor1 = find_k0_floor(ep, mu)
     k0_floor2 = find_k0_floor(-mu, -ep)
     
     k0_floor = max([k0_floor1, k0_floor2])
-    return k0_floor1, k0_floor2
+
+    return k0_floor * (2 * np.pi)
 
 def ky_k0_space(mink0, maxk0, q, phcs, num):
     def r_range(i, ky):

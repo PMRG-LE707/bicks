@@ -158,7 +158,6 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                                solve_coefficents)
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1]
                              for i in range(0, 2*n_real, 2)]
-        print(coefficents)
         """
         coefs = [1]
         
@@ -396,7 +395,6 @@ def singleboundry(real_fields, imag_fields, num, constant_number=0):
         
         coefficents = np.append(np.ones(1, dtype=complex),
                                solve_coefficents)
-        print(coefficents[1])
 
         return coefficents[1]   
     

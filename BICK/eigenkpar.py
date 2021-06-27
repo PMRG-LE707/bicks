@@ -1,6 +1,7 @@
 import numpy as np
 from MathTool import find_real_roots_for_small_and_big_q, find_n_roots_for_small_and_big_q, find_real_roots
 from MathTool import dichotomy
+import matplotlib.pyplot as plt
 
 def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     """
@@ -36,28 +37,38 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
         mu = -phcs.ep
     nmax = np.sqrt((ep*mu).max())
     def f(k_parallel):
-        kxa = [np.sqrt(mu[i] * ep[i] * (k0a) ** 2 - k_parallel ** 2 + 0j) for i in range(2)]
+        kxa = [np.sqrt(mu[i] * ep[i] * (k0a) ** 2 - k_parallel ** 2 + 0j)\
+               for i in range(2)]
         eta = (kxa[1] * mu[0]) / (kxa[0] * mu[1])
-        output = np.cos(qa) - np.cos(kxa[0] * (1 - fr)) * np.cos(kxa[1] * fr) + 0.5 * (eta + 1 / eta) * np.sin(
+        output = np.cos(qa) - np.cos(kxa[0] * (1 - fr)) * np.cos(kxa[1] * fr)\
+        + 0.5 * (eta + 1 / eta) * np.sin(
             kxa[0] * (1 - fr)) * np.sin(kxa[1] * fr)
-        return output.real
+        return np.real(output)
     
     def fi(k_parallel):
         return f(1j * k_parallel)
-    
     
     if abs(phcs.ep[1] - phcs.ep[0]) * min([1 - fr, fr]) < 0.2:
         real_k_parallel = find_real_roots_for_small_and_big_q(f, qa)
     else:
         real_k_parallel = find_real_roots(f, nmax * k0a + 0.12)
-    
+    real_k_parallel = find_real_roots(f, nmax * k0a + 0.12)
     nreal = len(real_k_parallel)
+    """
+    xvalue = np.linspace(0,5)
+    yvalue = f(xvalue)
+    fig1 = plt.figure()
+    ax = fig1.add_subplot(111)
+    ax.plot(xvalue, yvalue, 'b', ls=':')
+    plt.show()
+    """
     if nreal < nmode:
         nimag = nmode - nreal
         imag_k_parallel = 1j * np.array(find_n_roots_for_small_and_big_q(fi, qa, nimag))
-        return real_k_parallel, imag_k_parallel
+        return [real_k_parallel, imag_k_parallel.tolist()]
     else:
-        return real_k_parallel[0:nmode], np.array([])
+        return [real_k_parallel, []]
+    
 
 def find_eigen_kpar_in_an_area(phcs, qa, k0a, num,
                                kpara_real_extreme,
