@@ -15,7 +15,7 @@ from Field import FieldsWithCTIRMix
 fr = 0.5
 ep = [1, 4.9]
 phcs = PhotonicCrystalSlab(ep, fr)
-num = EssentialNumber(n_radiation=1)
+num = EssentialNumber(n_radiation=1, nimag_plus=2)
 
 deltak0 = 1.0e-3
 k0f = mini_frequncy(phcs, num, 0, 0)
@@ -73,8 +73,12 @@ while ky<maxky:
                 if kpei[0]<ky and kphi[0]<ky:
                     xdata3.append(ky)
                     ydata3.append(k0)
-                    kppe = [kpei[1:], [kpei[0]]]
-                    kpph = [kphi[1:], [kphi[0]]]
+                    imkpe = kpe[i][1]*1
+                    imkph = kph[i][1]*1
+                    imkpe.append(kpei[0])
+                    imkph.append(kphi[0])
+                    kppe = [kpei[1:], imkpe]
+                    kpph = [kphi[1:], imkph]
                     alldata.append([ky, k0, kppe, kpph])
                 else:
                     alldata.append([ky, k0, kpe[i], kph[i]])
