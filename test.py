@@ -12,10 +12,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Field import FieldsWithCTIRMix
 
+n_imag_p = 2
 fr = 0.5
 ep = [1, 4.9]
-phcs = PhotonicCrystalSlab(ep, fr)
-num = EssentialNumber(n_radiation=1, nimag_plus=2)
+phcs = PhotonicCrystalSlab(ep, fr, thickness=1.5)
+num = EssentialNumber(n_radiation=1, nimag_plus=n_imag_p)
 
 deltak0 = 1.0e-3
 k0f = mini_frequncy(phcs, num, 0, 0)
@@ -25,7 +26,7 @@ kph = []
 numponit = 200
 k0set = np.linspace(k0f, maxk0, num=numponit)
 deltak0 = (maxk0 - k0f)/numponit
-q = 0
+q = 0 * 2 * np.pi
 for k0s in k0set:    
     singe_kpe = find_eigen_kpar(phcs, k0s, q, num.modes)
     singe_kph = find_eigen_kpar(phcs, k0s, q, num.modes, mode="H")
@@ -36,9 +37,9 @@ ky = 0
 
 def radiationline(i, ky):
     if i%2:
-        value_k0 = np.sqrt((q + (i - 1) / 2)**2 + ky**2)
+        value_k0 = np.sqrt((q/(2*np.pi) + (i - 1) / 2)**2 + ky**2)
     else:
-        value_k0 = np.sqrt((i / 2 - q)**2 + ky**2)
+        value_k0 = np.sqrt((i / 2 - q/(2*np.pi))**2 + ky**2)
     return value_k0
 
 def num_positive(array, value):
@@ -95,26 +96,41 @@ ax.scatter(xdata2, ydata2, s=0.1,
            label="2 propagation modes(2 if $k_y=0$)")
 ax.scatter(xdata3, ydata3, s=0.1, c="black",
            label="2 propagation modes(3 if $k_y=0$)")
-plt.legend(markerscale=20)
-plt.show()
 
-for onedata in alldata:
+xdata4 = []
+ydata4 = []
+for i in range(len(alldata)):
+    onedata = alldata[i]
     ky = onedata[0]
     k0 = onedata[1]
     kparae = onedata[2]
     kparah = onedata[3]
     f1 = FieldsWithCTIRMix(phcs, num, k0, 0, ky, kparae, kparah)
     numb = 0
-    for coef in [f1.even_coefs_inside[0],f1.even_coefs_inside[2]]:
-        if abs(coef.real)>0.999:
-            numb = numb + 1
+    theta1 = np.angle(f1.even_coefs_inside[0])
+    theta2 = np.angle(f1.even_coefs_inside[2])
+    if i==0:
+        deltatheta0 = 1 - abs(theta1 - theta2)/np.pi
+    else:
+        deltatheta0 = deltatheta
+    deltatheta = 1 - abs(theta1 - theta2)/np.pi
+    if deltatheta*deltatheta0<=0 and abs(deltatheta0-deltatheta)<0.05:
+        xdata4.append(ky)
+        ydata4.append(k0)
+        print(theta1)
+    if f1.even_coefs_inside[0].real>0.999 and\
+    f1.even_coefs_inside[2].real<-0.999:
+        numb = numb + 2
     if numb == 2:
+        
         print("=====")
+        print("nimag: ", n_imag_p)
         print(f1.even_coefs_inside)
         print("h: ",phcs.h)
         print("k0: ", k0/(2*np.pi))
         print("ky: ", ky/(2*np.pi))
-    
-
-
-
+        
+ax.scatter(xdata4, ydata4, s=1,
+           label="parallal")
+plt.legend(markerscale=1)
+plt.show()

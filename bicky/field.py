@@ -357,7 +357,7 @@ class FieldsWithCTIRMix:
                               for kpar in Hk_real_parallel]
         H_imag_eigenstates = [BulkEigenStates(phcs, k0a, kpar, qa, mode="H") 
                               for kpar in Hk_imag_parallel]
-        sw_num = 1
+        sw_num = 0
         sw_eigenstates = H_real_eigenstates[sw_num]
         del H_real_eigenstates[sw_num]
         H_imag_eigenstates.append(sw_eigenstates)
