@@ -1,11 +1,9 @@
 import numpy as np
-from MathTool import find_real_roots_for_small_and_big_q, find_n_roots_for_small_and_big_q, find_real_roots
-from MathTool import dichotomy
-import matplotlib.pyplot as plt
+from bicky.mathtool import find_real_roots_for_small_and_big_q, \
+find_n_roots_for_small_and_big_q, find_real_roots, dichotomy
 
 def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
-    """
-    The eigenstates of the 1D photonic crystal.
+    """The eigenstates of the 1D photonic crystal.
     
     Paramters
     ---------
@@ -54,14 +52,6 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
         real_k_parallel = find_real_roots(f, nmax * k0a + 0.12)
     real_k_parallel = find_real_roots(f, nmax * k0a + 0.12)
     nreal = len(real_k_parallel)
-    """
-    xvalue = np.linspace(0,5)
-    yvalue = f(xvalue)
-    fig1 = plt.figure()
-    ax = fig1.add_subplot(111)
-    ax.plot(xvalue, yvalue, 'b', ls=':')
-    plt.show()
-    """
     if nreal < nmode:
         nimag = nmode - nreal
         imag_k_parallel = 1j * np.array(find_n_roots_for_small_and_big_q(fi, qa, nimag))

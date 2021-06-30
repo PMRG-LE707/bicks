@@ -2,9 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-from BoundryConditionWithcTIR import getcoefficents
-from eigenkpar import find_eigen_kpar
-
+from bicky.boundryconditionwithcTIR import getcoefficents
 
 class BulkEigenStates:
     """

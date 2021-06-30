@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def dichotomy(f, a, b, epsilon=1.0e-5):
     fa = f(a)
     while True:

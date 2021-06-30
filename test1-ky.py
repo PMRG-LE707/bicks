@@ -4,13 +4,12 @@ Created on Mon Apr 19 15:29:16 2021
 
 @author: CWXie
 """
-from PhotonicCrystalBandProjection import mini_frequncy
-from crystalandnumber import PhotonicCrystalSlab, EssentialNumber
-from bicky import FindBICs
-from eigenkpar import find_eigen_kpar
+from bicky.photoniccrystalbandprojection import mini_frequncy
+from bicky.crystalandnumber import PhotonicCrystalSlab, EssentialNumber
+from bicky.eigenkpar import find_eigen_kpar
 import numpy as np
 import matplotlib.pyplot as plt
-from Field import FieldsWithCTIRMix
+from bicky.field import FieldsWithCTIRMix
 
 n_imag_p = 2
 fr = 0.5

@@ -1,1 +1,2 @@
-# This is a branch which exist for adding new function
+# This is a software to find BICs in 1D PhC slab
+

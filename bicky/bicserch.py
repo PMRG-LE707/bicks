@@ -1,6 +1,6 @@
-from eigenkpar import find_eigen_kpar_in_an_area
-from PhotonicCrystalBandProjection import find_band_projection
-from Field import FieldsWithCTIRInArea
+from bicky.eigenkpar import find_eigen_kpar_in_an_area
+from bicky.photoniccrystalbandprojection import find_band_projection
+from bicky.field import FieldsWithCTIRInArea
 import numpy as np
 
 class FindBICs:

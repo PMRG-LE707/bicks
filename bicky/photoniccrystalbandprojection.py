@@ -1,5 +1,5 @@
 import numpy as np
-from MathTool import find_n_roots, find_real_roots, find_n_roots_for_small_and_big_q, find_real_roots_for_small_and_big_q
+from bicky.mathtool import find_n_roots, find_real_roots, find_n_roots_for_small_and_big_q, find_real_roots_for_small_and_big_q
 import matplotlib.pyplot as plt
 
 def find_band_projection(phcs, num, Nq=100, mode="E"):
