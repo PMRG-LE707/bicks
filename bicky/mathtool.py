@@ -1,6 +1,10 @@
 import numpy as np
 
 def dichotomy(f, a, b, epsilon=1.0e-5):
+    """Tradional dichotomy to find a root of a function
+    
+    
+    """
     fa = f(a)
     while True:
         c = (a + b) / 2.0

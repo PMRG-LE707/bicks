@@ -3,13 +3,12 @@ import numpy as np
 
 
 class PhotonicCrystalSlab:
-    """
-    Here, we defined a class named PhotonicCrystalSlab
+    """Here, we defined a class named PhotonicCrystalSlab
     which is 1D.
     Warning! The structure is non-magnetic.
 
-    Attributes:
-    ------------
+    Attributes
+    ----------
     h: float
         thickness of the PC slab.
     ep: list
@@ -29,12 +28,11 @@ class PhotonicCrystalSlab:
         """
         Initialize the 1D PhC slab.
         
-        Paramters:
-        ----------
-        epsilon: ndarray, dtype=float
+        Paramters
+        ---------
+        epsilon: list[float]
             a list which contains the dielectric constant
-            of the two different layers; np.array([small, big]),
-            for example, np.array([1.0, 4.9])   
+            of the two different layers   
         fillingrate: float
             filling ratio (fill the small dielectric constant medium).
         periodlength: float
@@ -110,8 +108,8 @@ class EssentialNumber:
     """
     Some essential number of modes or orders.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     ne: int(>0)
         number of diffraction orders(negetive).
     po: int(>0)
@@ -134,8 +132,8 @@ class EssentialNumber:
         """
         Initialize the essential numbers
         
-        Paramters:
-        ----------
+        Paramters
+        ---------
         n_radiation: int, optional
             number of radiation channels in air.
         nimag_plus: int, optional

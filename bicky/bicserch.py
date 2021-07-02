@@ -4,8 +4,11 @@ from bicky.field import FieldsWithCTIRInArea
 import numpy as np
 
 class FindBICs:
-    """
-    find BICs in q-k0 space
+    """find BICs in q-k0 space
+    
+    Attributes
+    ----------
+    
     """
     def __init__(self, phcs, num, mode="E", Nq=250):
         """
@@ -15,14 +18,11 @@ class FindBICs:
         ---------
         phcs: PhotonicCrystalSlab
             the Photonic Crystal Slab which is a kind of class.
-        
         num: EssentialNumber
-            
         mode: {"E", "H"}, optional
-            considered mode
-            
+            considered mode 
         Nq: int, optional
-            number which we divided half of Brillouin into
+            number which we divided half of the Brillouin into
         
         """
         deltaq = 0.5/Nq

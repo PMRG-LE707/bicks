@@ -20,10 +20,10 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     
     Returns
     -------
-    real_k_parallel: np.array
-        real k_parallels of eigenstates
-    imag_k_parallel: np.array
-        imag k_parallels of eigenstates
+    real_k_parallel: np.ndarray
+        real k_parallels(eigenvalue) of eigenstates
+    imag_k_parallel: np.ndarray
+        imaginary k_parallels(eigenvalue) of eigenstates
     """
 
     fr = phcs.fr
@@ -34,6 +34,7 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
         ep = -phcs.mu
         mu = -phcs.ep
     nmax = np.sqrt((ep*mu).max())
+    
     def f(k_parallel):
         kxa = [np.sqrt(mu[i] * ep[i] * (k0a) ** 2 - k_parallel ** 2 + 0j)\
                for i in range(2)]
@@ -52,9 +53,11 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
         real_k_parallel = find_real_roots(f, nmax * k0a + 0.12)
     real_k_parallel = find_real_roots(f, nmax * k0a + 0.12)
     nreal = len(real_k_parallel)
+    
     if nreal < nmode:
         nimag = nmode - nreal
-        imag_k_parallel = 1j * np.array(find_n_roots_for_small_and_big_q(fi, qa, nimag))
+        imag_k_parallel = 1j * np.array(
+                find_n_roots_for_small_and_big_q(fi, qa, nimag))
         return [real_k_parallel, imag_k_parallel.tolist()]
     else:
         return [real_k_parallel, []]
@@ -67,16 +70,33 @@ def find_eigen_kpar_in_an_area(phcs, qa, k0a, num,
     """
     The eigenstates of the 1D photonic crystal.
 
-    :param pcs: the Photonic Crystal Slab which is a kind of class.
-    :param q: the Bloch wave number
-    :param k0: the frequency divided by (2pi*c)
-    :param n: a class named EssentialNumber
-    :param real_kza_m: this is the area in which Bloch waves' kz(real) will be found
-    :param imag_kza_m: this is the area in which Bloch waves' kz(image) will be found
-    :return: the Fourier coefficients of every Bloch wave and the kz in PhC(all_kza) and air(kzaout)
+    Paramters
+    ---------
+    phcs: PhotonicCrystalSlab
+        the Photonic Crystal Slab which is a kind of class.
+    qa: float
+        the Bloch wave number
+    k0a: float
+        the frequency divided by (2pi*c)
+    num: EssentialNumber
+    kpara_real_extreme: list[float]
+        there is a real eigenvalue between any the adjacent two in this list
+    kpara_imag_extreme: list[float]
+        there is an imaginary eigenvalue between any the adjacent two in this
+        list
+    mode: {"E", "H"}, optional
+        the mode of the eigenstate
+    
+    Returns
+    -------
+    real_k_parallel: np.ndarray
+        real k_parallels(eigenvalue) of eigenstates
+    imag_k_parallel: np.ndarray
+        imaginary k_parallels(eigenvalue) of eigenstates
     """
 
     fr = phcs.fr
+    
     if mode.lower() == "e":
         ep = phcs.ep
         mu = phcs.mu
@@ -84,9 +104,9 @@ def find_eigen_kpar_in_an_area(phcs, qa, k0a, num,
         ep = -phcs.mu
         mu = -phcs.ep
         
-    
     muepk0a = mu * ep * (k0a)**2
     mu0, mu1 = mu
+    
     def f(kza):
         kya = np.sqrt(muepk0a - kza**2 + 0j)
         kya0, kya1 = kya
@@ -97,7 +117,6 @@ def find_eigen_kpar_in_an_area(phcs, qa, k0a, num,
 
     def fi(kza):
         return f(1j * kza)
-
     
     n_real = 0
     n_image = 0

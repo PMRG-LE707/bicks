@@ -3,13 +3,12 @@ import numpy as np
 
 def getcoefficents(real_fields, imag_fields,
                    num, polarizationmode="single"):
-    """
-    I'am a function, I can give you the coefficents of
+    """I'am a function, I can give you the coefficents of
     different eigenstates(both incidence and reflection)
     when the cTIR of Bloch waves in one boundry happens.
     
     Paramters
-    ----------
+    ---------
     fields: 
         a list of lenth 4, it contains incident and
         reflected fields with real kz and imag kz, respectively.
@@ -20,8 +19,13 @@ def getcoefficents(real_fields, imag_fields,
     polarizationmode: 
         "mix" or "single", if the mode is H 
         or E mode only, key the "single", if both, key the "mix"
-    return: 
-         the coefficents of different eigenstates in two
+    
+    Returns
+    -------
+    list[float]
+        
+        
+        the coefficents of different eigenstates in two
         kinds(even or odd for E mode)
     """
     
