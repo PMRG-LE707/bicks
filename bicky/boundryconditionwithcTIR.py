@@ -7,8 +7,8 @@ def getcoefficents(real_fields, imag_fields,
     different eigenstates(both incidence and reflection)
     when the cTIR of Bloch waves in one boundry happens.
     
-    Paramters
-    ---------
+    Parameters
+    ----------
     fields: 
         a list of lenth 4, it contains incident and
         reflected fields with real kz and imag kz, respectively.
@@ -41,18 +41,28 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
     """
     For the mix mode(both E and H mode)
     
-    Paramters
+    Parameters
     ----------
-    :fields: a list of lenth 4, it contains incident and
-        reflected fields with real kz and imag kz, respectively.
-    :nne: negative diffraction oders
-    :npo: positive diffraction oders
-    :constant_number: the serial number of columm which is 
+    real_fields: list[FieldInPhCS]
+        the fields from eigenstates with real kz
+    imag_fields: list[FieldInPhCS]
+        the fields from eigenstates with imaginary kz
+    num: EssentialNumber
+    constant_number: int, optional
+        the serial number of columm of extend matricx which represents
         constant in eqs.
-    :return: the coefficents of different eigenstates in two
-        kinds(even or odd for E mode)
-    """
     
+    Returns
+    -------
+    list[float]
+        the ratio of coefficients of two Bloch waves in opposite
+        direction(the tangential compoments of E are even in z direction).
+    list[float]
+        the ratio of coefficients of two Bloch waves in opposite
+        direction(the tangential compoments of E are odd in z direction).
+    list[float]
+        real kz of all Bloch waves
+    """
     nd = num.d
     # fields in real and imag part
     field_components = ["Ex", "Ey", "Hx", "Hy"]
@@ -143,11 +153,16 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
         """
         Give the extended matrix to get the solution.
         
-        Paramters
-        ---------------
-        :extend_Matrix: extend matrix provided by the eqs
-        :return: the coefficients of the fields in the PhCs and
-            tx and ty
+        Parameters
+        ----------
+        extend_Matrix: np.ndarray(dtype=np.float)
+            extend matrix provided by the eqs
+        
+        Returns
+        -------
+        list[float]
+            the ratio of coefficients of two Bloch waves in opposite
+            direction on the boundry.
         """
         
         extend_Matrix = np.array(extend_Matrix)
@@ -162,22 +177,7 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
                                solve_coefficents)
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1]
                              for i in range(0, 2*n_real, 2)]
-        """
-        coefs = [1]
-        
-        coefs.extend(solve_coefficents[0:n_real + n_imag - 1])
-        for j in range(n_imag):
-            field_mode = imag_fields[j].mode
-            if field_mode == "E":
-                coefs.append(solve_coefficents[n_real - 1 + j])
-            else:
-                coefs.append(-solve_coefficents[n_real - 1 + j])
-        
-        tx = solve_coefficents[n_real + n_imag - 1:
-                               n_real + n_imag - 1 + nd - 1]
-        
-        ty = solve_coefficents[n_real + n_imag - 1 + nd - 1:]
-        """
+
         return real_coeffs_ratio   
     
     return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
@@ -187,16 +187,27 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     """
     For the single mode(only E or H mode)
     
-    Paramters
+    Parameters
     ----------
-    :fields: a list of lenth 4, it contains incident and
-        reflected fields with real kz and imag kz, respectively.
-    :nne: negative diffraction oders
-    :npo: positive diffraction oders
-    :constant_number: the serial number of columm which is 
+    real_fields: list[FieldInPhCS]
+        the fields from eigenstates with real kz
+    imag_fields: list[FieldInPhCS]
+        the fields from eigenstates with imaginary kz
+    num: EssentialNumber
+    constant_number: int, optional
+        the serial number of columm of extend matricx which represents
         constant in eqs.
-    :return: the coefficents of different eigenstates in two
-        kinds(even or odd)
+    
+    Returns
+    -------
+    list[float]
+        ratio of coefficients of two Bloch waves in opposite
+        direction(the tangential compoments of E are even in z direction).
+    list[float]
+        ratio of coefficients of two Bloch waves in opposite
+        direction(the tangential compoments of E are odd in z direction).
+    list[float]
+        real kz of all Bloch waves
     """
     nd = num.d
     nne = num.ne
@@ -279,11 +290,16 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
         """
         Give the extended matrix to get the solution.
         
-        Paramters
-        ---------------
-        :extend_Matrix: extend matrix provided by the eqs
-        :return: the coefficients of the fields in the PhCs and
-            tx and ty
+        Parameters
+        ----------
+        extend_Matrix: np.ndarray(dtype=np.float)
+            extend matrix provided by the eqs
+        
+        Returns
+        -------
+        list[float]
+            the ratio of coefficients of two Bloch waves in opposite
+            direction on the boundry.
         """
         
         extend_Matrix = np.array(extend_Matrix)
@@ -301,6 +317,7 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
         return real_coeffs_ratio * expzh
     
     return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
+
 
 def singleboundry(real_fields, imag_fields, num, constant_number=0):
     """

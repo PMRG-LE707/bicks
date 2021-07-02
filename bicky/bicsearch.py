@@ -8,14 +8,19 @@ class FindBICs:
     
     Attributes
     ----------
-    
+    BIC_qs: list[list[float]]
+        each item contains BICs' qs for corresponding thickness.
+    BIC_k0s: list[list[float]]
+        each item contains BICs' k0s for corresponding thickness.
+    BIC_hs: list[float]
+        the thickness of PhC slab where BICs exist.
     """
     def __init__(self, phcs, num, mode="E", Nq=250):
         """
         Initialize the class, create the gridding.
         
-        Paramters
-        ---------
+        Parameters
+        ----------
         phcs: PhotonicCrystalSlab
             the Photonic Crystal Slab which is a kind of class.
         num: EssentialNumber
@@ -116,6 +121,9 @@ class FindBICs:
               
         return qk0, real_k_parallel, imag_k_parallel
     def getcoeffs(self):
+        """get the ratio of coefficients of two Bloch waves in opposite
+        direction.
+        """
         qk0 = self.qk0
         phcs, num = self.phcs, self.num
         real_k_parallel, imag_k_parallel = \
@@ -141,6 +149,19 @@ class FindBICs:
         self.kzas = np.array(kzas)
         
     def run(self, hstart, hend, Nh=20, limit=0.999):
+        """search BICs by varying thickness of PhC slab.
+        
+        Parameters
+        ----------
+        hstart: float
+            start searching in this thickness
+        hend: float
+            end searching in this thickness
+        Nh: int, optional
+            number of searching thickness
+        limit:float
+            the precision of judging if a point in q-k0 space is BIC
+        """
         qk0 = self.qk0
         num = self.num
         odd_ceofs = self.odd_ceofs
@@ -151,10 +172,18 @@ class FindBICs:
         def find_bic(h):
             """
             This is a function to find bics in PhCS
-            --------------------------------
+            
+            Parameters
+            ----------
             h: int
                 the thickness of PhCS
-            return: the coordinate(q, k0) of bics
+            
+            Returns
+            -------
+            list[float]:
+                the BICs' q
+            list[float]:
+                the BICs' k0
             """
             test = []
             odd_ceofs_boundry = np.real(odd_ceofs *
