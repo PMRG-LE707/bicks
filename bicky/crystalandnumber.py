@@ -118,7 +118,7 @@ class EssentialNumber:
         number of diffraction orders.
     r: int(>0)
         number of radiation channels in air.
-    listr: np.array(, dtype=np.int)
+    listr: np.ndarray(dtype=np.int)
         radiation channels orders.
     real: int(>0)
         number of considered real kz.
@@ -175,8 +175,7 @@ class EssentialNumber:
         elif n_propagation == 3 and n_radiation == 1:
             listr.append(-1)
             self.listr = np.array(listr, dtype=np.int)
-            
-        
+              
         else:
             raise ValueError("""n_propagation should be 1 more 
                              than n_radiationor or 3 while n_radiation == 1""")

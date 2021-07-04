@@ -2,8 +2,6 @@ import numpy as np
 
 def dichotomy(f, a, b, epsilon=1.0e-5):
     """Tradional dichotomy to find a root of a function
-    
-    
     """
     fa = f(a)
     while True:
@@ -173,6 +171,3 @@ def secant(f, a, b, eps=1.0e-5):
             b = c
             fa = fb
             fb = f(b)
-
-def mydot(a, b):
-    return np.array([[b[0, 0] * a[0, 0] + b[1, 0] * a[0, 1], b[0, 1] * a[0, 0] + b[1, 1] * a[0, 1]], [b[0, 0] * a[1, 0] + b[1, 0] * a[1, 1], b[0, 1] * a[1, 0] + b[1, 1] * a[1, 1]]])

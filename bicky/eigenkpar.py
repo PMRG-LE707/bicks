@@ -20,9 +20,9 @@ def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
     
     Returns
     -------
-    real_k_parallel: np.ndarray
+    np.ndarray
         real k_parallels(eigenvalue) of eigenstates
-    imag_k_parallel: np.ndarray
+    np.ndarray
         imaginary k_parallels(eigenvalue) of eigenstates
     """
 
@@ -89,9 +89,9 @@ def find_eigen_kpar_in_an_area(phcs, qa, k0a, num,
     
     Returns
     -------
-    real_k_parallel: np.ndarray
+    np.ndarray
         real k_parallels(eigenvalue) of eigenstates
-    imag_k_parallel: np.ndarray
+    np.ndarray
         imaginary k_parallels(eigenvalue) of eigenstates
     """
 

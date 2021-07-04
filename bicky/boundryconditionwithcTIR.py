@@ -1,43 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-def getcoefficents(real_fields, imag_fields,
-                   num, polarizationmode="single"):
-    """I'am a function, I can give you the coefficents of
-    different eigenstates(both incidence and reflection)
-    when the cTIR of Bloch waves in one boundry happens.
-    
-    Parameters
-    ----------
-    fields: 
-        a list of lenth 4, it contains incident and
-        reflected fields with real kz and imag kz, respectively.
-    nne:
-        negative diffraction oders.
-    npo: 
-        positive diffraction oders.
-    polarizationmode: 
-        "mix" or "single", if the mode is H 
-        or E mode only, key the "single", if both, key the "mix"
-    
-    Returns
-    -------
-    list[float]
-        
-        
-        the coefficents of different eigenstates in two
-        kinds(even or odd for E mode)
-    """
-    
-    if polarizationmode == "mix":
-        return getcoemix(real_fields, imag_fields, num)
-    elif polarizationmode == "single":
-        return getcoesingle(real_fields, imag_fields, num)
-    else:
-        return singleboundry(real_fields, imag_fields, num)
-    
-
-def getcoemix(real_fields, imag_fields, num, constant_number=0):
+def getcoemix(real_fields, imag_fields, num, constant_number=2):
     """
     For the mix mode(both E and H mode)
     
@@ -74,12 +38,10 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
     kya = real_fields[0].kya
     real_kzas = np.array([field.kza[0]
                           for field in real_fields])
-    
     h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
-    
-    
     n_real = len(real_fields)
     n_imag = len(imag_fields)
+    expzh = np.exp(1j*h*real_kzas)
     
     # flag will growth 1 if it not in channel order
     flag = 0
@@ -172,13 +134,13 @@ def getcoemix(real_fields, imag_fields, num, constant_number=0):
         constant_vector = - extend_Matrix[:, constant_number] * 1
         solve_coefficents = np.linalg.solve(coefficients_Matrix,
                                             constant_vector)
-        
-        coefficents = np.append(np.ones(1, dtype=complex),
-                               solve_coefficents)
+        coefficents = np.insert(solve_coefficents,
+                                constant_number,
+                                1.0)
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1]
                              for i in range(0, 2*n_real, 2)]
 
-        return real_coeffs_ratio   
+        return real_coeffs_ratio# * expzh   
     
     return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
 
@@ -244,8 +206,9 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
         for component in field_components:
             even_one_row = []
             odd_one_row = []
-            inside_field_real_part = np.array([field.field_Fourier[component] 
-                                      for field in real_fields]).flatten().tolist()
+            inside_field_real_part = np.array([
+                    field.field_Fourier[component] 
+                    for field in real_fields]).flatten().tolist()
             
             odd_inside_field_imag_part = []
             even_inside_field_imag_part = []
@@ -309,9 +272,9 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
         constant_vector = - extend_Matrix[:, constant_number] * 1
         solve_coefficents = np.linalg.solve(coefficients_Matrix,
                                             constant_vector)
-        coefficents = np.append(np.ones(1, dtype=complex),
-                               solve_coefficents)
-        
+        coefficents = np.insert(solve_coefficents,
+                                constant_number,
+                                1.0)
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1] 
                              for i in range(0, 2*n_real, 2)]
         return real_coeffs_ratio * expzh

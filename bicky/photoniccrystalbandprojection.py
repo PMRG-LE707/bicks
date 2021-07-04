@@ -1,5 +1,7 @@
 import numpy as np
-from bicky.mathtool import find_n_roots, find_real_roots, find_n_roots_for_small_and_big_q, find_real_roots_for_small_and_big_q
+from bicky.mathtool import find_n_roots, find_real_roots
+from bicky.mathtool import find_n_roots_for_small_and_big_q
+from bicky.mathtool import find_real_roots_for_small_and_big_q
 import matplotlib.pyplot as plt
 
 def find_band_projection(phcs, num, Nq=100, mode="E"):
@@ -51,20 +53,27 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
             kxa = np.sqrt(muep + 0j) * k0a 
             kxa0, kxa1 = kxa
             eta = (kxa1 * mu0) / (kxa0 * mu1)
-            output = np.cos(qa) - np.cos(kxa0 * (1 - fr)) * np.cos(kxa1 * fr) +\
-                0.5 * (eta + 1 / eta) * np.sin(kxa0 * (1 - fr)) * np.sin(kxa1 * fr)
+            output = np.cos(qa) -\
+            np.cos(kxa0 * (1 - fr)) * np.cos(kxa1 * fr) +\
+            0.5 * (eta + 1 / eta) * np.sin(kxa0 * (1 - fr)) * np.sin(kxa1 * fr)
             return output.real
         # the k0 region of n_propagation progating modes and n_radiatoin
         if abs(ep1 - ep0) * min([1 - fr, fr]) < 0.2:
-            k0_start = find_n_roots_for_small_and_big_q(f_kza0, qa, num.real + 1, gox=1.0e-5, peak1=1.0e-5)
+            k0_start = find_n_roots_for_small_and_big_q(
+                    f_kza0, qa, num.real + 1, gox=1.0e-5, peak1=1.0e-5)
         else:
             k0_start = find_n_roots(f_kza0, num.real + 1, 0.12)
         if num.r % 2:
-            k0_floor1 = np.max([k0_start[-2] / (2 * np.pi), q + (num.r - 1) / 2]) + deltak0
-            k0_ceiling1 = np.min([k0_start[-1] / (2 * np.pi), (num.r + 1) / 2 - q])
+            k0_floor1 = np.max(
+                    [k0_start[-2] / (2 * np.pi), q + (num.r - 1) / 2]) +\
+                    deltak0
+            k0_ceiling1 = np.min(
+                    [k0_start[-1] / (2 * np.pi), (num.r + 1) / 2 - q])
         else:
-            k0_floor1 = np.max([k0_start[-2] / (2 * np.pi), num.r / 2 - q]) + deltak0
-            k0_ceiling1 = np.min([k0_start[-1] / (2 * np.pi), num.r / 2 + q])
+            k0_floor1 = np.max(
+                    [k0_start[-2] / (2 * np.pi), num.r / 2 - q]) + deltak0
+            k0_ceiling1 = np.min(
+                    [k0_start[-1] / (2 * np.pi), num.r / 2 + q])
         if k0_floor1 <= k0_ceiling1:
             k0_floor.append(k0_floor1)
             k0_ceiling.append(k0_ceiling1)
@@ -114,8 +123,10 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
     
     for k0a in band_proj["k0a"]*2*np.pi*a:
         if abs(ep1 - ep0) * min([1 - fr, fr]) < 0.2:
-            kpara_real1 = np.array(find_real_roots_for_small_and_big_q(f1, 0))
-            kpara_real2 = np.array(find_real_roots_for_small_and_big_q(f2, np.pi))
+            kpara_real1 = np.array(
+                    find_real_roots_for_small_and_big_q(f1, 0))
+            kpara_real2 = np.array(
+                    find_real_roots_for_small_and_big_q(f2, np.pi))
         else:
             kpara_real1 = np.array(find_real_roots(f1, nmax * k0a + 0.12))
             kpara_real2 = np.array(find_real_roots(f2, nmax * k0a + 0.12))
@@ -124,8 +135,10 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
         temkpara_real_proj.sort()
         kpara_real_proj.append(temkpara_real_proj.tolist())
         
-        kpara_imag1 = np.array(find_n_roots_for_small_and_big_q(fi1, 0, num.imag + 1))
-        kpara_imag2 = np.array(find_n_roots_for_small_and_big_q(fi2, np.pi, num.imag + 1))
+        kpara_imag1 = np.array(
+                find_n_roots_for_small_and_big_q(fi1, 0, num.imag + 1))
+        kpara_imag2 = np.array(
+                find_n_roots_for_small_and_big_q(fi2, np.pi, num.imag + 1))
         temkpara_real_proj = np.concatenate((kpara_imag1, kpara_imag2))
         temkpara_real_proj.sort()
         kpara_imag_proj.append(temkpara_real_proj.tolist())
@@ -164,15 +177,20 @@ def mini_frequncy(phcs, num, qa, deltak0):
             kxa = np.sqrt(muep + 0j) * k0a 
             kxa0, kxa1 = kxa
             eta = (kxa1 * mu0) / (kxa0 * mu1)
-            output = np.cos(qa) - np.cos(kxa0 * (1 - fr)) * np.cos(kxa1 * fr) +\
-                0.5 * (eta + 1 / eta) * np.sin(kxa0 * (1 - fr)) * np.sin(kxa1 * fr)
+            output = np.cos(qa) -\
+            np.cos(kxa0 * (1 - fr)) * np.cos(kxa1 * fr) +\
+            0.5 * (eta + 1 / eta) * np.sin(kxa0 * (1 - fr)) * np.sin(kxa1 * fr)
             return output.real
         # the k0 region of n_propagation progating modes and n_radiatoin
-        k0_start = find_n_roots_for_small_and_big_q(f_kza0, qa, num.real, gox=1.0e-10, peak1=1.0e-10)
+        k0_start = find_n_roots_for_small_and_big_q(
+                f_kza0, qa, num.real, gox=1.0e-10, peak1=1.0e-10)
         if num.r % 2:
-            k0_floor = np.max([k0_start[-1] / (2 * np.pi), q + (num.r - 1) / 2]) + deltak0
+            k0_floor = np.max(
+                    [k0_start[-1] / (2 * np.pi), q + (num.r - 1) / 2]) +\
+                    deltak0
         else:
-            k0_floor = np.max([k0_start[-1] / (2 * np.pi), num.r / 2 - q]) + deltak0
+            k0_floor = np.max(
+                    [k0_start[-1] / (2 * np.pi), num.r / 2 - q]) + deltak0
         return k0_floor
     k0_floor1 = find_k0_floor(ep, mu)
     k0_floor2 = find_k0_floor(-mu, -ep)

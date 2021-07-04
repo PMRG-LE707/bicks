@@ -106,18 +106,7 @@ for i in range(len(alldata)):
     kparah = onedata[3]
     f1 = FieldsWithCTIRMix(phcs, num, k0, 0, ky, kparae, kparah)
     numb = 0
-    theta1 = np.angle(f1.even_coefs_inside[0])
-    theta2 = np.angle(f1.even_coefs_inside[2])
-    if i==0:
-        deltatheta0 = 1 - abs(theta1 - theta2)/np.pi
-    else:
-        deltatheta0 = deltatheta
-    deltatheta = 1 - abs(theta1 - theta2)/np.pi
-    if deltatheta*deltatheta0<=0 and abs(deltatheta0-deltatheta)<0.05:
-        xdata4.append(ky)
-        ydata4.append(k0)
-        print(theta1)
-    if f1.even_coefs_inside[0].real>0.999 and\
+    if f1.even_coefs_inside[1].real<-0.999 and\
     f1.even_coefs_inside[2].real<-0.999:
         numb = numb + 2
     if numb == 2:
