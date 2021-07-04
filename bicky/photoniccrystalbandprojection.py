@@ -181,21 +181,4 @@ def mini_frequncy(phcs, num, qa, deltak0):
 
     return k0_floor * (2 * np.pi)
 
-def ky_k0_space(mink0, maxk0, q, phcs, num):
-    def r_range(i, ky):
-        if i%2:
-            value_k0 = np.sqrt((q + (num.r - 1) / 2)**2 + ky**2)
-        else:
-            value_k0 = np.sqrt((num.r / 2 - q)**2 + ky**2)
-        return value_k0
-    xvalue = np.linspace(0,2)
-    ni = 2
-    yvalue1 = r_range(ni, xvalue)
-    yvalue2 = r_range(ni+1,xvalue)
-    fig1 = plt.figure()
-    ax = fig1.add_subplot(111)
-    ax.plot(xvalue, yvalue1, 'b', ls=':')
-    ax.plot(xvalue, yvalue2, 'black', ls='--')
-    plt.show()
-    return 0
 

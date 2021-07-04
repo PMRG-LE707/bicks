@@ -16,8 +16,7 @@ class FindBICs:
         the thickness of PhC slab where BICs exist.
     """
     def __init__(self, phcs, num, mode="E", Nq=250):
-        """
-        Initialize the class, create the gridding.
+        """Initialize the class, create the gridding.
         
         Parameters
         ----------
@@ -28,7 +27,6 @@ class FindBICs:
             considered mode 
         Nq: int, optional
             number which we divided half of the Brillouin into
-        
         """
         deltaq = 0.5/Nq
         k0_floor, k0_ceiling, dataq, band_proj = \

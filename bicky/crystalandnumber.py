@@ -55,7 +55,7 @@ class PhotonicCrystalSlab:
         width2 = self.fr
         
         # set up the canvas
-        font = {'family' : 'Times New Roman', 'weight' : 'normal', 'size'   : 14}
+        font = {'family' : 'Times New Roman', 'weight' : 'normal', 'size': 14}
         fig1 = plt.figure()
         ax1 = fig1.add_subplot(111, aspect='equal')
         ax1.set_xlabel('x (a)', font)
@@ -178,5 +178,6 @@ class EssentialNumber:
             
         
         else:
-            raise ValueError("n_propagation should be 1 more than n_radiationor or 3 while n_radiation == 1")
+            raise ValueError("""n_propagation should be 1 more 
+                             than n_radiationor or 3 while n_radiation == 1""")
             

@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-from bicky.boundryconditionwithcTIR import getcoefficents
+from bicky.boundryconditionwithcTIR import getcoesingle,  getcoemix
 
 class BulkEigenStates:
     """
@@ -372,9 +372,7 @@ class FieldsWithCTIRMix:
                               for eigenstate in imag_eigenstates]
         
         even_coefs, odd_coefs, real_kzas = \
-            getcoefficents(real_fields, imag_fields, num,
-                           polarizationmode="mix")
-        
+            getcoemix(real_fields, imag_fields, num)
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
         self.realkzs = real_kzas
@@ -422,10 +420,10 @@ class FieldsWithCTIRInArea:
         
         if mode.lower() == "e":
             nEmode = num.modes
-            nHmode = 0
         elif mode.lower() == "h":
-            nHmode = num.modes
             nEmode = 0
+        else:
+            raise ValueError("mode should be 'E' or 'H'")
         
         if nEmode == 0:
             Ek_real_parallel, Ek_imag_parallel = [], []
@@ -458,7 +456,7 @@ class FieldsWithCTIRInArea:
                               for eigenstate in imag_eigenstates]
         
         even_coefs, odd_coefs, real_kzas = \
-            getcoefficents(real_fields, imag_fields, num)
+            getcoesingle(real_fields, imag_fields, num)
         
         self.even_coefs_inside = np.array(even_coefs)
         self.odd_coefs_inside = np.array(odd_coefs)
