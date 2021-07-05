@@ -3,6 +3,8 @@ from bicky.photoniccrystalbandprojection import find_band_projection
 from bicky.photoniccrystalbandprojection import mini_frequncy
 from bicky.field import FieldsWithCTIRInArea, FieldsWithCTIRMix
 import numpy as np
+import sys
+import time
 
 class FindBICs:
     """find BICs in q-k0 space with single polarization.
@@ -299,21 +301,37 @@ class FindBICsMix:
         """
         self.phcs = phcs
         self.num = num
+        self.qa = qa
+        self.k0range = k0range
+        self.Nk0 = Nk0
+        
         delta = k0range/Nk0
         mink0 = mini_frequncy(phcs, num, qa, 0)
         maxk0 = mink0 + k0range
         kpe = []
         kph = []
         k0set = np.linspace(mink0, maxk0, num=Nk0)
+        nik0 = 0
+        start = time.time()
+        print("=====================")
+        print("Initializing:")
         for k0s in k0set:    
+            nik0 = nik0 + 1
             singe_kpe = find_eigen_kpar(phcs, k0s, qa, num.modes)
             singe_kph = find_eigen_kpar(phcs, k0s, qa, num.modes, mode="H")
             kpe.append(singe_kpe)
             kph.append(singe_kph)
+            iky = int(nik0/Nk0*50)
+            aii = "*" * iky
+            bii = "." * (50 - iky)
+            cii = iky / 50 * 100
+            dur = time.time() - start
+            print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),end = "")
+            
+        
+            
         maxky = np.sqrt(maxk0**2 - qa**2)
-        ky = 0
-        
-        
+
         def lightline(i, ky):
             """light line
             """
@@ -335,8 +353,11 @@ class FindBICsMix:
         kyk0 = []
         k_para_e = []
         k_para_h = []
-        
-        while ky<maxky:
+        print("\n"+"=====================")
+        start = time.time()
+        print("Meshing:")
+        kylist = np.arange(0, maxky, delta)
+        for ky in kylist:
             kys = ky/(2*np.pi)
             k0f = lightline(1, kys)*2*np.pi
             k0c = lightline(2, kys)*2*np.pi
@@ -360,28 +381,43 @@ class FindBICsMix:
                         else:
                             k_para_e.append(kpe[i])
                             k_para_h.append(kph[i])
-            ky = ky + delta
+                iky = int(ky/maxky*50) + 1
+                aii = "*" * iky
+                bii = "." * (50 - iky)
+                cii = iky / 50 * 100
+                dur = time.time() - start
+                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),end = "")
+        print("\n" + "initialzation is completed!")
+        
+        
         self.kyk0 = kyk0
         self.k_para_e = k_para_e
         self.k_para_h = k_para_h
         
     
-    
-    def getcoeffs(self):
-        """get the ratio of coefficients of two Bloch waves in opposite
-        direction.
+    def run(self, limit=0.999):
+        """get the BICs.
+        
+        Parameters
+        ----------
+        limit:float
+            the precision of judging if a point in q-k0 space is a BIC
+        
         """
         kyk0 = self.kyk0
         k_para_e = self.k_para_e
         k_para_h = self.k_para_h
         phcs = self.phcs
         num = self.num
+        n_real = num.real
+        h = phcs.h
         even_coefs = []
         odd_coefs = []
-        kzas = []
-        print(len(kyk0))
+        
+        print("=====================")
+        print("Searching:")
+        start = time.time()
         for i in range(len(kyk0)):
-            
             ky = kyk0[i][0]
             k0 = kyk0[i][1]
             kparae = k_para_e[i]
@@ -389,36 +425,17 @@ class FindBICsMix:
             f1 = FieldsWithCTIRMix(phcs, num, k0, 0, ky, kparae, kparah)
             even_coefs_inside = f1.even_coefs_inside
             odd_coefs_inside = f1.odd_coefs_inside
-            realkzs = f1.realkzs
-            even_coefs.append(even_coefs_inside[1:])
-            odd_coefs.append(odd_coefs_inside[1:])
-            kzas.append(realkzs[1:])
+            even_coefs.append(even_coefs_inside)
+            odd_coefs.append(odd_coefs_inside)
             
-        self.kzas = np.array(kzas)
-        self.even_coefs = np.array(even_coefs)
-        self.odd_coefs = np.array(odd_coefs)
-
-    def run(self, hstart, hend, Nh=20, limit=0.999):
-        """search BICs by varying thickness of PhC slab.
+            iky = int(i/len(kyk0)*50)+1
+            aii = "*" * iky
+            bii = "." * (50-iky)
+            cii = iky / 50 * 100
+            dur = time.time() - start
+            print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),end = "")
+        print("\n"+"Mission accomplished!")
         
-        Parameters
-        ----------
-        hstart: float
-            start searching in this thickness
-        hend: float
-            end searching in this thickness
-        Nh: int, optional
-            number of searching thickness
-        limit:float
-            the precision of judging if a point in q-k0 space is a BIC
-        """
-        kyk0 = self.kyk0
-        num = self.num
-        odd_coefs = self.odd_coefs
-        even_coefs = self.even_coefs
-        kzas = self.kzas
-        n_real = num.real
-
         def find_bic(h):
             """
             This is a function to find bics in PhCS
@@ -436,11 +453,8 @@ class FindBICsMix:
                 the BICs' k0
             """
             test = []
-            odd_coefs_boundry = np.real(odd_coefs *
-                                        np.exp(-1j * h * kzas)).tolist()
-            
-            even_coefs_boundry = np.real(even_coefs *
-                                         np.exp(-1j * h * kzas)).tolist()
+            odd_coefs_boundry = np.real(odd_coefs).tolist()
+            even_coefs_boundry = np.real(even_coefs).tolist()
 
             for i in range(len(kyk0)):
                 neflag = n_real
@@ -470,7 +484,8 @@ class FindBICsMix:
             for i in range(len(test) - 1):
                 for j in range(len(bicregion)):
                     if (abs(bicregion[j][-1][0] - test[i+1][0])<limitdelta
-                        and abs(bicregion[j][-1][1] - test[i+1][1])<limitdelta):
+                        and 
+                        abs(bicregion[j][-1][1] - test[i+1][1])<limitdelta):
                         bicregion[j].append(test[i+1])
                         flag = 0
                         break
@@ -482,29 +497,26 @@ class FindBICsMix:
             bic_ky = []
             bic_k0 = []
             for onebicregion in bicregion:
-                onebic = [onebicregion[0][0], onebicregion[0][1], onebicregion[0][2]]
+                onebic = [onebicregion[0][0],
+                          onebicregion[0][1],
+                          onebicregion[0][2]]
                 for j in range(len(onebicregion)-1):
                     if onebicregion[j+1][-1]>onebic[-1]:
-                        onebic = [onebicregion[j+1][0], onebicregion[j+1][1], onebicregion[j+1][2]]
+                        onebic = [onebicregion[j+1][0],
+                                  onebicregion[j+1][1],
+                                  onebicregion[j+1][2]]
                 bic_ky.append(onebic[0]/(2*np.pi))
                 bic_k0.append(onebic[1]/(2*np.pi))
             return bic_ky, bic_k0
         
-        rangeh = np.linspace(hstart, hend, Nh)
+        bic_ky, bic_k0 = find_bic(h)
+        if bic_ky:
+            self.bic_kys = bic_ky
+            self.bic_k0s = bic_k0
+        else:
+            self.bic_kys = []
+            self.bic_k0s = []
         
-        bic_kys, bic_k0s, bic_hs = [], [], []
-        for h in rangeh:
-            try:
-                bic_ky, bic_k0 = find_bic(h)
-                if bic_ky:
-                    bic_kys.append(bic_ky)
-                    bic_k0s.append(bic_k0)
-                    bic_hs.append(h)
-            except:
-                pass
-        self.bic_kys = bic_kys
-        self.bic_k0s = bic_k0s
-        self.bic_hs = bic_hs
         
      
         

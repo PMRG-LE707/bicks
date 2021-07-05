@@ -359,7 +359,6 @@ class FieldsWithCTIRMix:
         sw_eigenstates = E_real_eigenstates[sw_num]
         del E_real_eigenstates[sw_num]
         E_imag_eigenstates.append(sw_eigenstates)
-        
         real_eigenstates = E_real_eigenstates * 1
         real_eigenstates.extend(H_real_eigenstates)
         

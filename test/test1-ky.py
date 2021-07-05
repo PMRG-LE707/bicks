@@ -14,7 +14,7 @@ from bicky.field import FieldsWithCTIRMix
 n_imag_p = 2
 fr = 0.5
 ep = [1, 4.9]
-phcs = PhotonicCrystalSlab(ep, fr, thickness=1.5)
+phcs = PhotonicCrystalSlab(ep, fr, thickness=1.492)
 num = EssentialNumber(n_radiation=1, nimag_plus=n_imag_p)
 
 deltak0 = 1.0e-3
@@ -64,15 +64,15 @@ while ky<maxky:
         kpei = kpe[i][0]
         kphi = kph[i][0]
         if k0>k0f and k0<k0c:
-            xdata.append(ky)
-            ydata.append(k0)
+            xdata.append(ky/(2*np.pi))
+            ydata.append(k0/(2*np.pi))
             if num_positive(kpei, ky)==2 and num_positive(kphi, ky)==2:
 
-                xdata2.append(ky)
-                ydata2.append(k0)
+                xdata2.append(ky/(2*np.pi))
+                ydata2.append(k0/(2*np.pi))
                 if kpei[0]<ky and kphi[0]<ky:
-                    xdata3.append(ky)
-                    ydata3.append(k0)
+                    xdata3.append(ky/(2*np.pi))
+                    ydata3.append(k0/(2*np.pi))
                     imkpe = kpe[i][1]*1
                     imkph = kph[i][1]*1
                     imkpe.append(kpei[0])

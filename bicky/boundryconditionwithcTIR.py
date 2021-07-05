@@ -134,15 +134,16 @@ def getcoemix(real_fields, imag_fields, num, constant_number=2):
         constant_vector = - extend_Matrix[:, constant_number] * 1
         solve_coefficents = np.linalg.solve(coefficients_Matrix,
                                             constant_vector)
+        
         coefficents = np.insert(solve_coefficents,
                                 constant_number,
                                 1.0)
         real_coeffs_ratio = [coefficents[i] / coefficents[i+1]
-                             for i in range(0, 2*n_real, 2)]
+                             for i in range(2, 2*n_real, 2)]
 
-        return real_coeffs_ratio# * expzh   
+        return real_coeffs_ratio   
     
-    return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
+    return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas[1:]
 
 
 def getcoesingle(real_fields, imag_fields, num, constant_number=0):
