@@ -41,7 +41,6 @@ def getcoemix(real_fields, imag_fields, num, constant_number=2):
     h = real_fields[0].es.phcs.h / real_fields[0].es.phcs.a
     n_real = len(real_fields)
     n_imag = len(imag_fields)
-    expzh = np.exp(1j*h*real_kzas)
     
     # flag will growth 1 if it not in channel order
     flag = 0

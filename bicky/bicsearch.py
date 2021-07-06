@@ -2,8 +2,9 @@ from bicky.eigenkpar import find_eigen_kpar_in_an_area, find_eigen_kpar
 from bicky.photoniccrystalbandprojection import find_band_projection
 from bicky.photoniccrystalbandprojection import mini_frequncy
 from bicky.field import FieldsWithCTIRInArea, FieldsWithCTIRMix
+import matplotlib.pyplot as plt
+import matplotlib.animation as ani
 import numpy as np
-import sys
 import time
 
 class FindBICs:
@@ -42,12 +43,18 @@ class FindBICs:
             deltaq = 0.5/Nq
             k0_floor, k0_ceiling, dataq, band_proj = \
                 find_band_projection(phcs, num, mode=mode, Nq=Nq)
+            self.k0_floor = k0_floor
+            self.k0_ceiling = k0_ceiling
+            self.dataq = dataq
             datak0 = band_proj["k0a"]
             kpara_real_range_origin = band_proj["real"]
             kpara_imag_range_origin = band_proj["imag"]
-            
+            print("=============")
+            print("Initializing:")
+            start = time.time()
             #gridding
             real_k_parallel, imag_k_parallel, qk0 = [], [], []
+            flagenum = len(dataq)//50
             for i in range(len(dataq)):
                 qa = i * deltaq + dataq[0]
                 # this is the area in which Bloch waves' kz(real and image) will be found
@@ -78,7 +85,15 @@ class FindBICs:
                     real_k_parallel.append(tem_real_k_parallel)
                     imag_k_parallel.append(tem_imag_k_parallel)
                     qk0.append([qa, k0a])
-                  
+                if i%flagenum == 0:
+                    
+                    iky = int(i/len(dataq)*50)+1
+                    aii = "*" * iky
+                    bii = "." * (50 - iky)
+                    cii = iky / 50 * 100
+                    dur = time.time() - start
+                    print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                          end = "")      
             self.qk0 = qk0
             self.real_k_parallel = real_k_parallel
             self.imag_k_parallel = imag_k_parallel
@@ -99,6 +114,7 @@ class FindBICs:
         
         #gridding
         real_k_parallel, imag_k_parallel, qk0 = [], [], []
+        
         for i in range(len(dataq)):
             qa = i * deltaq + dataq[0]
             # this is the area in which Bloch waves' kz(real and image) will be found
@@ -128,8 +144,7 @@ class FindBICs:
                                                mode=mode)
                 real_k_parallel.append(tem_real_k_parallel)
                 imag_k_parallel.append(tem_imag_k_parallel)
-                qk0.append([qa, k0a])
-              
+                qk0.append([qa, k0a])     
         return qk0, real_k_parallel, imag_k_parallel
     
     
@@ -143,7 +158,11 @@ class FindBICs:
             self.real_k_parallel, self.imag_k_parallel
         kya = 0
         odd_coefs, even_coefs, kzas = [], [], []
-        
+        print("\n" + "Initialization accomplished.")
+        print("=============")
+        print("Computing:")
+        start = time.time()
+        flagenum = len(qk0)//50
         for i in range(len(qk0)):
             qa, k0a = qk0[i]
             temfield = FieldsWithCTIRInArea(phcs, num,
@@ -155,11 +174,18 @@ class FindBICs:
             odd_coefs.append(temfield.odd_coefs_inside)
             even_coefs.append(temfield.even_coefs_inside)
             kzas.append(temfield.realkzs)
-            
-            
+            if i%flagenum == 0:
+                iky = int(i/len(qk0)*50)+1
+                aii = "*" * iky
+                bii = "." * (50 - iky)
+                cii = iky / 50 * 100
+                dur = time.time() - start
+                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                      end = "")      
         self.odd_coefs = np.array(odd_coefs)
         self.even_coefs = np.array(even_coefs)
         self.kzas = np.array(kzas)
+        print("\n" + "Computation accomplished.")
         
     
     def run(self, hstart, hend, Nh=20, limit=0.999):
@@ -234,7 +260,8 @@ class FindBICs:
             for i in range(len(test) - 1):
                 for j in range(len(bicregion)):
                     if (abs(bicregion[j][-1][0] - test[i+1][0])<limitdelta
-                        and abs(bicregion[j][-1][1] - test[i+1][1])<limitdelta):
+                        and \
+                        abs(bicregion[j][-1][1] - test[i+1][1])<limitdelta):
                         bicregion[j].append(test[i+1])
                         flag = 0
                         break
@@ -246,31 +273,130 @@ class FindBICs:
             bic_q = []
             bic_k0 = []
             for onebicregion in bicregion:
-                onebic = [onebicregion[0][0], onebicregion[0][1], onebicregion[0][2]]
+                onebic = [onebicregion[0][0],
+                          onebicregion[0][1],
+                          onebicregion[0][2]]
                 for j in range(len(onebicregion)-1):
                     if onebicregion[j+1][-1]>onebic[-1]:
-                        onebic = [onebicregion[j+1][0], onebicregion[j+1][1], onebicregion[j+1][2]]
+                        onebic = [onebicregion[j+1][0],
+                                  onebicregion[j+1][1],
+                                  onebicregion[j+1][2]]
                 bic_q.append(onebic[0])
                 bic_k0.append(onebic[1])
             return bic_q, bic_k0
         
         rangeh = np.linspace(hstart, hend, Nh)
-        
+        print("=============")
+        print("Searching:")
+        start = time.time()
         bic_qs, bic_k0s, bic_hs = [], [], []
+        ikk=0
         for h in rangeh:
+            ikk = ikk+1
+            iky = int(ikk/Nh*50)
+            aii = "*" * iky
+            bii = "." * (50 - iky)
+            cii = iky / 50 * 100
+            dur = time.time() - start
+            print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                  end = "")      
+            nbics=0
             try:
                 bic_q, bic_k0 = find_bic(h)
                 if bic_q:
                     bic_qs.append(bic_q)
                     bic_k0s.append(bic_k0)
                     bic_hs.append(h)
+                    nbics = len(bic_q) + nbics
             except:
                 pass
+        print("\n" + "Search accomplished.")
+        print("Number of BICs found: ", len(np.array(bic_qs).flatten()))
         self.bic_qs = bic_qs
         self.bic_k0s = bic_k0s
         self.bic_hs = bic_hs
+        
+        self.dynamicplot()
 
-
+    def showbic(self,i=0):
+        h = self.bic_hs[i]
+        bic_q = self.bic_qs[i]
+        bic_k0 = self.bic_k0s[i]
+        dataq = self.dataq
+        k0_ceiling = self.k0_ceiling
+        k0_floor = self.k0_floor
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('$q(2\pi/a)$')
+        ax.set_ylabel('$\omega(2\pi c/a)$')
+        ax.set_title("BICs in $q-\omega$ space($h=%.3fa, k_y=0$)"%h)
+        ax.plot(dataq, k0_ceiling, 'b', ls=':')
+        ax.plot(dataq, k0_floor, 'black', ls='--')
+        ax.fill_between(dataq, k0_ceiling, k0_floor,
+                        color='C1', alpha=0.3,
+                        interpolate=True,
+                        label="Serching range")
+        ax.scatter(bic_q, bic_k0, marker='*',
+                   s=100, c="red", edgecolors="black", 
+                   label="BIC")
+        plt.legend(markerscale=1)
+        plt.show()
+    
+    
+    def dynamicplot(self):
+        bic_h = self.bic_hs
+        bic_q = self.bic_qs
+        bic_k0 = self.bic_k0s
+        dataq = self.dataq
+        k0_ceiling = self.k0_ceiling
+        k0_floor = self.k0_floor
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('$q(2\pi/a)$')
+        ax.set_ylabel('$\omega(2\pi c/a)$')
+        ax.set_title("BICs in $q-\omega$ space($k_y=0$)")
+        
+        h_template = '$h$ = %.3f $a$'
+        h_text = ax.text(0.05, 0.45, '', fontsize=14,
+                         bbox=dict(boxstyle="round4", fc="maroon", alpha=0.3))
+        ax.plot(dataq, k0_ceiling, 'b', ls=':')
+        ax.plot(dataq, k0_floor, 'black', ls='--')
+        ax.fill_between(dataq, k0_ceiling, k0_floor,
+                        color='C1', alpha=0.3,
+                        interpolate=True,
+                        label="Serching range")
+        
+        bics, = ax.plot([], [], 'o', marker='*',
+                        markersize=10, color = 'red',
+                        animated=True, label='BICs')
+        
+        def update(i):
+            try:
+                x = bic_q[i]
+                y = bic_k0[i]
+            except BaseException:
+                x, y = [], []
+            bics.set_data(x, y)
+            h_text.set_text(h_template % bic_h[i])
+            return bics, h_text
+        
+        
+        anim = ani.FuncAnimation(
+            fig,
+            update,
+            frames=np.arange(
+                0,
+                len(bic_h),
+                1),
+            interval=200,
+            blit=True)
+        plt.legend()
+        plt.tight_layout()
+        plt.show(anim)
+        
+            
+    
 class FindBICsMix:
     """find BICs in ky-k0 space with mix polarization.
     
@@ -313,21 +439,24 @@ class FindBICsMix:
         k0set = np.linspace(mink0, maxk0, num=Nk0)
         nik0 = 0
         start = time.time()
-        print("=====================")
+        print("=================")
         print("Initializing:")
+        flagenum = Nk0//50
         for k0s in k0set:    
             nik0 = nik0 + 1
             singe_kpe = find_eigen_kpar(phcs, k0s, qa, num.modes)
             singe_kph = find_eigen_kpar(phcs, k0s, qa, num.modes, mode="H")
             kpe.append(singe_kpe)
             kph.append(singe_kph)
-            iky = int(nik0/Nk0*50)
-            aii = "*" * iky
-            bii = "." * (50 - iky)
-            cii = iky / 50 * 100
-            dur = time.time() - start
-            print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),end = "")
-            
+            if nik0%flagenum == 0:
+                iky = int(nik0/Nk0*50)
+                aii = "*" * iky
+                bii = "." * (50 - iky)
+                cii = iky / 50 * 100
+                dur = time.time() - start
+                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                      end = "")      
+        print("\n" + "Initialization accomplished.")
         
             
         maxky = np.sqrt(maxk0**2 - qa**2)
@@ -350,14 +479,19 @@ class FindBICsMix:
                 if item>value:
                     total = total + 1
             return total
+        
         kyk0 = []
         k_para_e = []
         k_para_h = []
-        print("\n"+"=====================")
+        print("=================")
         start = time.time()
         print("Meshing:")
         kylist = np.arange(0, maxky, delta)
+        
+        flagenum = len(kylist)//50
+        niky = 0
         for ky in kylist:
+            niky = niky + 1
             kys = ky/(2*np.pi)
             k0f = lightline(1, kys)*2*np.pi
             k0c = lightline(2, kys)*2*np.pi
@@ -381,13 +515,16 @@ class FindBICsMix:
                         else:
                             k_para_e.append(kpe[i])
                             k_para_h.append(kph[i])
-                iky = int(ky/maxky*50) + 1
+            
+            if niky%flagenum == 0:
+                iky = int(niky/len(kylist)*50)+1
                 aii = "*" * iky
                 bii = "." * (50 - iky)
                 cii = iky / 50 * 100
                 dur = time.time() - start
-                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),end = "")
-        print("\n" + "initialzation is completed!")
+                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                      end = "")      
+        print("\n" + "Mesh accomplished.")
         
         
         self.kyk0 = kyk0
@@ -413,13 +550,30 @@ class FindBICsMix:
         h = phcs.h
         even_coefs = []
         odd_coefs = []
-        
-        print("=====================")
+        dataky = []
+        datak01 = []
+        datak02 = []
+        print("=================")
         print("Searching:")
         start = time.time()
+        flagenum = len(kyk0)//50
+        
+        ky = kyk0[0][0]
+        k0 = kyk0[0][1]
         for i in range(len(kyk0)):
             ky = kyk0[i][0]
             k0 = kyk0[i][1]
+            if i:
+                if kyk0[i][0] == kyk0[i-1][0]:
+                    pass
+                else:
+                    datak01.append(k0/(2*np.pi))
+                    datak02.append(kyk0[i-1][1]/(2*np.pi))
+                    dataky.append(ky/(2*np.pi))
+            else:
+                dataky.append(ky/(2*np.pi))
+                datak01.append(k0/(2*np.pi))
+            
             kparae = k_para_e[i]
             kparah = k_para_h[i]
             f1 = FieldsWithCTIRMix(phcs, num, k0, 0, ky, kparae, kparah)
@@ -428,13 +582,16 @@ class FindBICsMix:
             even_coefs.append(even_coefs_inside)
             odd_coefs.append(odd_coefs_inside)
             
-            iky = int(i/len(kyk0)*50)+1
-            aii = "*" * iky
-            bii = "." * (50-iky)
-            cii = iky / 50 * 100
-            dur = time.time() - start
-            print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),end = "")
-        print("\n"+"Mission accomplished!")
+            if i%flagenum == 0:
+                iky = int(i/len(kyk0)*50) + 1
+                aii = "*" * iky
+                bii = "." * (50 - iky)
+                cii = iky / 50 * 100
+                dur = time.time() - start
+                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                      end = "")      
+        datak02.append(k0/(2*np.pi))
+        print("\n"+"Search accomplished.")
         
         def find_bic(h):
             """
@@ -479,7 +636,7 @@ class FindBICsMix:
                 
             bicregion = [[test[0]]]
             flag = 1
-            limitdelta = 0.02
+            limitdelta = 0.02 * (2*np.pi)
             
             for i in range(len(test) - 1):
                 for j in range(len(bicregion)):
@@ -516,6 +673,50 @@ class FindBICsMix:
         else:
             self.bic_kys = []
             self.bic_k0s = []
+        print("Number of BICs found: ", len(bic_k0))
+        
+        dataky = np.array(dataky)
+        datak01 = np.array(datak01)
+        datak02 = np.array(datak02)
+        self.dataky = dataky
+        self.datak01 = datak01
+        self.datak02 = datak02
+        
+        self.showbic()
+    
+    def showbic(self):
+        phcs = self.phcs
+        qa = self.qa
+        h = phcs.h
+        bic_ky = self.bic_kys
+        bic_k0 = self.bic_k0s
+        dataky = self.dataky
+        datak01 = self.datak01
+        datak02 = self.datak02
+        fig1 = plt.figure()
+        ax = fig1.add_subplot(111)
+        ax.set_xlabel('$k_y(2\pi/a)$')
+        ax.set_ylabel('$\omega(2\pi c/a)$')
+        ax.set_title("BICs in $k_y-\omega$ space($h="+\
+                                              str(round(h,3))+\
+                                              "a, q="+str(qa)+"$)")
+        ax.plot(dataky, datak01, 'b', ls=':')
+        ax.plot(dataky, datak02, 'black', ls='--')
+        ax.fill_between(dataky, datak01, datak02,
+                        color='C1', alpha=0.3,
+                        interpolate=True,
+                        label="Serching range")
+        """
+        ax.fill_between(dataky, datak01, datak02,
+                        where=(datak01 < datak02),
+                        color='C1', alpha=0.3, interpolate=True)
+        """
+        ax.scatter(bic_ky, bic_k0, marker='*',
+                   s=100, c="red", edgecolors="black", 
+                   label="BIC")
+        plt.legend(markerscale=1)
+        plt.show()
+        
         
         
      

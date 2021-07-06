@@ -2,7 +2,6 @@ import numpy as np
 from bicky.mathtool import find_n_roots, find_real_roots
 from bicky.mathtool import find_n_roots_for_small_and_big_q
 from bicky.mathtool import find_real_roots_for_small_and_big_q
-import matplotlib.pyplot as plt
 
 def find_band_projection(phcs, num, Nq=100, mode="E"):
     """
@@ -79,13 +78,9 @@ def find_band_projection(phcs, num, Nq=100, mode="E"):
             k0_ceiling.append(k0_ceiling1)
             dataq.append(q)
     
-    fig1 = plt.figure()
-    ax = fig1.add_subplot(111)
-    ax.plot(dataq, k0_floor, 'b', ls=':')
-    ax.plot(dataq, k0_ceiling, 'black', ls='--')
-    plt.show()
-    
-    
+    dataq = np.array(dataq)
+    k0_floor = np.array(k0_floor)
+    k0_ceiling = np.array(k0_ceiling)
     k0_max = max(k0_ceiling)
     k0_min = min(k0_floor)
     
