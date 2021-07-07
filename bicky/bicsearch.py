@@ -358,12 +358,12 @@ class FindBICs:
         ax.set_title("BICs in $q-\omega$ space($k_y=0$)")
         
         h_template = '$h$ = %.3f $a$'
-        h_text = ax.text(0.05, 0.45, '', fontsize=14,
+        h_text = ax.text(0, np.min(k0_floor) + 0.02, '', fontsize=14,
                          bbox=dict(boxstyle="round4", fc="maroon", alpha=0.3))
         ax.plot(dataq, k0_ceiling, 'b', ls=':')
         ax.plot(dataq, k0_floor, 'black', ls='--')
         ax.fill_between(dataq, k0_ceiling, k0_floor,
-                        color='C1', alpha=0.3,
+                        color='lightskyblue', alpha=0.4,
                         interpolate=True,
                         label="Serching range")
         
@@ -389,7 +389,7 @@ class FindBICs:
                 0,
                 len(bic_h),
                 1),
-            interval=200,
+            interval=400,
             blit=True)
         plt.legend()
         plt.tight_layout()
