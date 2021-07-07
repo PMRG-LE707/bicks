@@ -11,7 +11,7 @@ mode = "E" # 设置为TE偏振，如果要设置为TM偏振请键入"H"
 fb = FindBICs(phcs, num, mode=mode) # 由光子晶体、划分的区域以及偏振模式构建的BIC搜寻器
 
 fb.getcoeffs() # 将反射相位记录到内存中
-hstart = 1.0 # 厚度的下限
-hend = 2.0 # 厚度的上限
+hstart = 1 # 厚度的下限
+hend = 2 # 厚度的上限
 Nh = 50 # 遍历厚度的个数
 fb.run(hstart, hend, Nh=Nh) # 让我们开始寻找吧!

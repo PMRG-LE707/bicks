@@ -316,7 +316,7 @@ class FindBICs:
         self.bic_k0s = bic_k0s
         self.bic_hs = bic_hs
         
-        self.dynamicplot()
+        self.dynamicplot(save="funny.gif")
 
     def showbic(self,i=0):
         h = self.bic_hs[i]
@@ -343,7 +343,7 @@ class FindBICs:
         plt.show()
     
     
-    def dynamicplot(self):
+    def dynamicplot(self, save=False):
         bic_h = self.bic_hs
         bic_q = self.bic_qs
         bic_k0 = self.bic_k0s
@@ -393,8 +393,13 @@ class FindBICs:
             blit=True)
         plt.legend()
         plt.tight_layout()
-        plt.show(anim)
         
+        if save:
+            anim.save(save, writer="imagemagick")
+        else:
+            plt.show(anim) 
+        
+    
             
     
 class FindBICsMix:
