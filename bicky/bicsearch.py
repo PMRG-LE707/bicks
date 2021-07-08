@@ -86,7 +86,6 @@ class FindBICs:
                     imag_k_parallel.append(tem_imag_k_parallel)
                     qk0.append([qa, k0a])
                 if i%flagenum == 0:
-                    
                     iky = int(i/len(dataq)*50)+1
                     aii = "*" * iky
                     bii = "." * (50 - iky)
@@ -291,15 +290,17 @@ class FindBICs:
         start = time.time()
         bic_qs, bic_k0s, bic_hs = [], [], []
         ikk=0
+        flagenum = Nh//50
         for h in rangeh:
             ikk = ikk+1
-            iky = int(ikk/Nh*50)
-            aii = "*" * iky
-            bii = "." * (50 - iky)
-            cii = iky / 50 * 100
-            dur = time.time() - start
-            print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
-                  end = "")      
+            if ikk%flagenum == 0:
+                iky = int(ikk/Nh*50)
+                aii = "*" * iky
+                bii = "." * (50 - iky)
+                cii = iky / 50 * 100
+                dur = time.time() - start
+                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                      end = "") 
             nbics=0
             try:
                 bic_q, bic_k0 = find_bic(h)
@@ -316,12 +317,11 @@ class FindBICs:
         self.bic_k0s = bic_k0s
         self.bic_hs = bic_hs
         
-        self.dynamicplot(save="funny.gif")
 
     def showbic(self,i=0):
-        h = self.bic_hs[i]
-        bic_q = self.bic_qs[i]
-        bic_k0 = self.bic_k0s[i]
+        h = self.bic_hs
+        bic_q = self.bic_qs
+        bic_k0 = self.bic_k0s
         dataq = self.dataq
         k0_ceiling = self.k0_ceiling
         k0_floor = self.k0_floor
@@ -329,6 +329,10 @@ class FindBICs:
         ax = fig.add_subplot(111)
         ax.set_xlabel('$q(2\pi/a)$')
         ax.set_ylabel('$\omega(2\pi c/a)$')
+        if h == []:
+            h = 0
+        else:
+            h = h[i]
         ax.set_title("BICs in $q-\omega$ space($h=%.3fa, k_y=0$)"%h)
         ax.plot(dataq, k0_ceiling, 'b', ls=':')
         ax.plot(dataq, k0_floor, 'black', ls='--')
@@ -336,9 +340,10 @@ class FindBICs:
                         color='C1', alpha=0.3,
                         interpolate=True,
                         label="Serching range")
-        ax.scatter(bic_q, bic_k0, marker='*',
-                   s=100, c="red", edgecolors="black", 
-                   label="BIC")
+        if bic_k0:
+            ax.scatter(bic_q[i], bic_k0[i], marker='*',
+                       s=100, c="red", edgecolors="black", 
+                       label="BIC")
         plt.legend(markerscale=1)
         plt.show()
     
@@ -407,12 +412,10 @@ class FindBICsMix:
     
     Attributes
     ----------
-    BIC_kys: list[list[float]]
+    BIC_kys: list[float]
         each item contains BICs' qs for corresponding thickness.
-    BIC_k0s: list[list[float]]
+    BIC_k0s: list[float]
         each item contains BICs' k0s for corresponding thickness.
-    BIC_hs: list[float]
-        the thickness of PhC slab where BICs exist.
     """
     def __init__(self, phcs, num, qa, k0range=0.5*2*np.pi, Nk0=200):
         """Initialize the class, create the gridding.
@@ -453,6 +456,7 @@ class FindBICsMix:
             singe_kph = find_eigen_kpar(phcs, k0s, qa, num.modes, mode="H")
             kpe.append(singe_kpe)
             kph.append(singe_kph)
+            
             if nik0%flagenum == 0:
                 iky = int(nik0/Nk0*50)
                 aii = "*" * iky
@@ -460,7 +464,8 @@ class FindBICsMix:
                 cii = iky / 50 * 100
                 dur = time.time() - start
                 print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
-                      end = "")      
+                      end = "")  
+            
         print("\n" + "Initialization accomplished.")
         
             
@@ -507,13 +512,19 @@ class FindBICsMix:
                 if k0>k0f and k0<k0c:
                     if num_large(kpei, ky)==2 and num_large(kphi, ky)==2:
                         kyk0.append([ky, k0])
-                        if kpei[0]<ky and kphi[0]<ky:
+                        #if kpei[0]<ky and kphi[0]<ky:
+                        lenthe = len(kpei)
+                        lenthh = len(kphi)
+                        if lenthe>2 and lenthh>2:
                             imkpe = kpe[i][1]*1
                             imkph = kph[i][1]*1
-                            imkpe.append(kpei[0])
-                            imkph.append(kphi[0])
-                            kppe = [kpei[1:], imkpe]
-                            kpph = [kphi[1:], imkph]
+                            imkpe.extend(kpei[0:lenthe-2])
+                            imkph.extend(kphi[0:lenthh-2])
+                            imkpe = imkpe[0:num.imag]
+                            imkph = imkph[0:num.imag]
+                            
+                            kppe = [kpei[lenthe-2:], imkpe]
+                            kpph = [kphi[lenthh-2:], imkph]
                             
                             k_para_e.append(kppe)
                             k_para_h.append(kpph)
@@ -528,7 +539,8 @@ class FindBICsMix:
                 cii = iky / 50 * 100
                 dur = time.time() - start
                 print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
-                      end = "")      
+                      end = "")  
+            
         print("\n" + "Mesh accomplished.")
         
         
@@ -670,8 +682,10 @@ class FindBICsMix:
                 bic_ky.append(onebic[0]/(2*np.pi))
                 bic_k0.append(onebic[1]/(2*np.pi))
             return bic_ky, bic_k0
-        
-        bic_ky, bic_k0 = find_bic(h)
+        try:
+            bic_ky, bic_k0 = find_bic(h)
+        except:
+            bic_ky, bic_k0 = [], []
         if bic_ky:
             self.bic_kys = bic_ky
             self.bic_k0s = bic_k0
