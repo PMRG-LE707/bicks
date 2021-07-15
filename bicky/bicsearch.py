@@ -410,11 +410,7 @@ class FindBICs:
         
         if save:
             anim.save(save, writer="imagemagick")
-        else:
-            plt.show(anim) 
-        
-    
-            
+     
     
 class FindBICsMix:
     """find BICs in ky-k0 space with mix polarization.

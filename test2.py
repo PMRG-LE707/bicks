@@ -13,5 +13,5 @@ fb = FindBICs(phcs, num, mode=mode) # 由光子晶体、划分的区域以及偏
 fb.getcoeffs() # 将反射相位记录到内存中
 hstart = 1.5 # 厚度的下限
 hend = 3 # 厚度的上限
-Nh = 5 # 遍历厚度的个数
+Nh = 50 # 遍历厚度的个数
 fb.run(hstart, hend, Nh=Nh) # 让我们开始寻找吧!
