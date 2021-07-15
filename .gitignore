@@ -1,8 +1,5 @@
 __pycache__/
 .DS_Store
-Doc/examples/.ipynb_checkpoints/
-Doc/.DS_Store
-Doc/examples/.DS_Store
 .ipynb_checkpoints/
 dist/
 bicky.egg-info/

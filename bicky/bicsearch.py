@@ -291,9 +291,19 @@ class FindBICs:
         bic_qs, bic_k0s, bic_hs = [], [], []
         ikk=0
         flagenum = Nh//50
+        nbics=0
         for h in rangeh:
             ikk = ikk+1
-            if ikk%flagenum == 0:
+            if Nh >= 50:
+                if ikk%flagenum == 0:
+                    iky = int(ikk/Nh*50)
+                    aii = "*" * iky
+                    bii = "." * (50 - iky)
+                    cii = iky / 50 * 100
+                    dur = time.time() - start
+                    print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                          end = "") 
+            else:
                 iky = int(ikk/Nh*50)
                 aii = "*" * iky
                 bii = "." * (50 - iky)
@@ -301,7 +311,6 @@ class FindBICs:
                 dur = time.time() - start
                 print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
                       end = "") 
-            nbics=0
             try:
                 bic_q, bic_k0 = find_bic(h)
                 if bic_q:
@@ -312,7 +321,7 @@ class FindBICs:
             except:
                 pass
         print("\n" + "Search accomplished.")
-        print("Number of BICs found: ", len(np.array(bic_qs).flatten()))
+        print("Number of BICs found: ", nbics)
         self.bic_qs = bic_qs
         self.bic_k0s = bic_k0s
         self.bic_hs = bic_hs
