@@ -1,4 +1,4 @@
-![avatar](./Doc/figures/bicksfig.png)
+![avatar](./Doc/figures/logo_1.jpeg)
 
 BICKS is a solver to find BICs in 1D PhC slab. Give the properties of a PhC slab and you can get the BICs. 
 
