@@ -24,7 +24,7 @@ git clone https://github.com/PMRG-LE707/findbic.git
 
 # Example
 
-There are a lot examples in ``` \Doc\examples\``` which can help you quick-start.
+There are a lot examples in ``` ./Doc/examples/``` which can help you quick-start.
 
 
 
