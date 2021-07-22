@@ -1,7 +1,7 @@
-from bicky.eigenkpar import find_eigen_kpar_in_an_area, find_eigen_kpar
-from bicky.photoniccrystalbandprojection import find_band_projection
-from bicky.photoniccrystalbandprojection import mini_frequncy
-from bicky.field import FieldsWithCTIRInArea, FieldsWithCTIRMix
+from bicks.eigenkpar import find_eigen_kpar_in_an_area, find_eigen_kpar
+from bicks.photoniccrystalbandprojection import find_band_projection
+from bicks.photoniccrystalbandprojection import mini_frequncy
+from bicks.field import FieldsWithCTIRInArea, FieldsWithCTIRMix
 import matplotlib.pyplot as plt
 import matplotlib.animation as ani
 import numpy as np
@@ -336,13 +336,13 @@ class FindBICs:
         k0_floor = self.k0_floor
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.set_xlabel('$q(2\pi/a)$')
+        ax.set_xlabel('$k_x(2\pi/a)$')
         ax.set_ylabel('$\omega(2\pi c/a)$')
         if h == []:
             h = 0
         else:
             h = h[i]
-        ax.set_title("BICs in $q-\omega$ space($h=%.3fa, k_y=0$)"%h)
+        ax.set_title("BICs in $k_x-\omega$ space($h=%.3fa, k_y=0$)"%h)
         ax.plot(dataq, k0_ceiling, 'b', ls=':')
         ax.plot(dataq, k0_floor, 'black', ls='--')
         ax.fill_between(dataq, k0_ceiling, k0_floor,
@@ -367,9 +367,9 @@ class FindBICs:
         
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.set_xlabel('$q(2\pi/a)$')
+        ax.set_xlabel('$k_x(2\pi/a)$')
         ax.set_ylabel('$\omega(2\pi c/a)$')
-        ax.set_title("BICs in $q-\omega$ space($k_y=0$)")
+        ax.set_title("BICs in $k_x-\omega$ space($k_y=0$)")
         
         h_template = '$h$ = %.3f $a$'
         h_text = ax.text(0, np.min(k0_floor) + 0.02, '', fontsize=14,

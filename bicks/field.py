@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-from bicky.boundryconditionwithcTIR import getcoesingle,  getcoemix
+from bicks.boundryconditionwithcTIR import getcoesingle,  getcoemix
 
 class BulkEigenStates:
     """

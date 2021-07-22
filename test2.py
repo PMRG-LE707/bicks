@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from bicky.crystalandnumber import PhotonicCrystalSlab, EssentialNumber
-from bicky.bicsearch import FindBICs
+from bicks.crystalandnumber import PhotonicCrystalSlab, EssentialNumber
+from bicks.bicsearch import FindBICs
 
 fr = 0.5 # 填充率
 ep = [1.0, 4.9] # 两种介电常数

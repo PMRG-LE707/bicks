@@ -1,7 +1,7 @@
 import numpy as np
-from bicky.mathtool import find_n_roots, find_real_roots
-from bicky.mathtool import find_n_roots_for_small_and_big_q
-from bicky.mathtool import find_real_roots_for_small_and_big_q
+from bicks.mathtool import find_n_roots, find_real_roots
+from bicks.mathtool import find_n_roots_for_small_and_big_q
+from bicks.mathtool import find_real_roots_for_small_and_big_q
 
 def find_band_projection(phcs, num, Nq=100, mode="E"):
     """

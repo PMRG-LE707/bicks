@@ -1,5 +1,5 @@
 import numpy as np
-from bicky.mathtool import find_real_roots_for_small_and_big_q, \
+from bicks.mathtool import find_real_roots_for_small_and_big_q, \
 find_n_roots_for_small_and_big_q, find_real_roots, dichotomy
 
 def find_eigen_kpar(phcs, k0a, qa, nmode, mode="E"):
