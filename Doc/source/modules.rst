@@ -1,7 +1,7 @@
-bicky
+bicks
 =====
 
 .. toctree::
    :maxdepth: 4
 
-   bicky
+   bicks

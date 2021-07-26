@@ -1,61 +1,61 @@
-bicky package
+bicks package
 =============
 
 Submodules
 ----------
 
-bicky.bicserch module
----------------------
-
-.. automodule:: bicky.bicserch
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bicky.boundryconditionwithcTIR module
--------------------------------------
-
-.. automodule:: bicky.boundryconditionwithcTIR
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bicky.crystalandnumber module
------------------------------
-
-.. automodule:: bicky.crystalandnumber
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bicky.eigenkpar module
+bicks.bicsearch module
 ----------------------
 
-.. automodule:: bicky.eigenkpar
+.. automodule:: bicks.bicsearch
    :members:
    :undoc-members:
    :show-inheritance:
 
-bicky.field module
+bicks.boundryconditionwithcTIR module
+-------------------------------------
+
+.. automodule:: bicks.boundryconditionwithcTIR
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bicks.crystalandnumber module
+-----------------------------
+
+.. automodule:: bicks.crystalandnumber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bicks.eigenkpar module
+----------------------
+
+.. automodule:: bicks.eigenkpar
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bicks.field module
 ------------------
 
-.. automodule:: bicky.field
+.. automodule:: bicks.field
    :members:
    :undoc-members:
    :show-inheritance:
 
-bicky.mathtool module
+bicks.mathtool module
 ---------------------
 
-.. automodule:: bicky.mathtool
+.. automodule:: bicks.mathtool
    :members:
    :undoc-members:
    :show-inheritance:
 
-bicky.photoniccrystalbandprojection module
+bicks.photoniccrystalbandprojection module
 ------------------------------------------
 
-.. automodule:: bicky.photoniccrystalbandprojection
+.. automodule:: bicks.photoniccrystalbandprojection
    :members:
    :undoc-members:
    :show-inheritance:
@@ -63,7 +63,7 @@ bicky.photoniccrystalbandprojection module
 Module contents
 ---------------
 
-.. automodule:: bicky
+.. automodule:: bicks
    :members:
    :undoc-members:
    :show-inheritance:
