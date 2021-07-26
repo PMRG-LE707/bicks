@@ -18,8 +18,8 @@ and in the other direction:
 
 Try this in your terminal or git bash to install bicks :
 
-```zsh
-git clone https://github.com/PMRG-LE707/findbic.git
+```bash
+git clone https://github.com/PMRG-LE707/bicks.git
 ```
 
 # Example
