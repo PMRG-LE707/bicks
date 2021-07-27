@@ -16,6 +16,12 @@ and in the other direction:
 
 # Install
 
+Easiest way:
+
+```bash
+pip install bicks
+```
+
 Try this in your terminal or git bash to install bicks :
 
 ```bash

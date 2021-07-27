@@ -4,16 +4,16 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="bicky",
+    name="bicks",
     version="0.0.2",
     author="cwxie",
-    author_email="541361425@qq.com",
+    author_email="cw.xie@qq.com",
     description="find BICs",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/PMRG-LE707/findbic",
+    url="https://github.com/PMRG-LE707/bicks",
     project_urls={
-        "Bug Tracker": "https://github.com/PMRG-LE707/findbic/issues",
+        "Bug Tracker": "https://github.com/PMRG-LE707/bicks/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",

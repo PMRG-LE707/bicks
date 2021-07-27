@@ -2,4 +2,4 @@ __pycache__/
 .DS_Store
 .ipynb_checkpoints/
 dist/
-bicky.egg-info/
+bicks.egg-info/
