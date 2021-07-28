@@ -32,7 +32,7 @@ git clone https://github.com/PMRG-LE707/bicks.git
 
 There are a lot examples in ``` ./Doc/examples/``` which can help you quick-start.
 
-# Docments
+# Documentation
 
 See [here](https://bicks.readthedocs.io/en/latest/) to get help about classes and functions in bicks.
 
