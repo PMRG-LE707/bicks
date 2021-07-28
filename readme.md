@@ -34,7 +34,7 @@ There are a lot examples in ``` ./Doc/examples/``` which can help you quick-star
 
 # Docments
 
-See [here](./Doc/build/html/index.html) to get help about classes and functions in bicks.
+See [here](https://bicks.readthedocs.io/en/latest/) to get help about classes and functions in bicks.
 
 
 
