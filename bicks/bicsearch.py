@@ -93,6 +93,7 @@ class FindBICs:
                     dur = time.time() - start
                     print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
                           end = "")      
+            print("\n" + "Initialization accomplished.")
             self.qk0 = qk0
             self.real_k_parallel = real_k_parallel
             self.imag_k_parallel = imag_k_parallel
@@ -157,7 +158,6 @@ class FindBICs:
             self.real_k_parallel, self.imag_k_parallel
         kya = 0
         odd_coefs, even_coefs, kzas = [], [], []
-        print("\n" + "Initialization accomplished.")
         print("=============")
         print("Computing:")
         start = time.time()
