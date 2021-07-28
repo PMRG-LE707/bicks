@@ -32,7 +32,9 @@ git clone https://github.com/PMRG-LE707/bicks.git
 
 There are a lot examples in ``` ./Doc/examples/``` which can help you quick-start.
 
+# Docments
 
+See [here](./Doc/build/html/index.html) to get help about classes and functions in bicks.
 
 
 
