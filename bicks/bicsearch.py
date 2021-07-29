@@ -348,7 +348,7 @@ class FindBICs:
         ax.fill_between(dataq, k0_ceiling, k0_floor,
                         color='C1', alpha=0.3,
                         interpolate=True,
-                        label="Serching range")
+                        label="Searching range")
         if bic_k0:
             ax.scatter(bic_q[i], bic_k0[i], marker='*',
                        s=100, c="red", edgecolors="black", 
@@ -379,7 +379,7 @@ class FindBICs:
         ax.fill_between(dataq, k0_ceiling, k0_floor,
                         color='lightskyblue', alpha=0.4,
                         interpolate=True,
-                        label="Serching range")
+                        label="Searching range")
         
         bics, = ax.plot([], [], 'o', marker='*',
                         markersize=10, color = 'red',
@@ -729,7 +729,7 @@ class FindBICsMix:
         ax.fill_between(dataky, datak01, datak02,
                         color='C1', alpha=0.3,
                         interpolate=True,
-                        label="Serching range")
+                        label="Searching range")
         """
         ax.fill_between(dataky, datak01, datak02,
                         where=(datak01 < datak02),
