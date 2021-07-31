@@ -60,3 +60,10 @@ bicks.photoniccrystalbandprojection module
    :undoc-members:
    :show-inheritance:
 
+Module contents
+---------------
+
+.. automodule:: bicks
+   :members:
+   :undoc-members:
+   :show-inheritance:
