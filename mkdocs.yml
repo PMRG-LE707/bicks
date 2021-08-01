@@ -1,0 +1,11 @@
+site_name: BICKS
+repo_url: https://github.com/PMRG-le707/bicks/
+nav:
+  - Home: 'index.md'
+  - Quick start: 'quickstart.md'
+  - Theory manual: 'theory_manual.md'
+  - 'bicks.md'
+theme: readthedocs
+
+copyright: |
+  &copy; CW. Xie
