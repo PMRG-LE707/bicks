@@ -282,20 +282,26 @@ def getcoesingle(real_fields, imag_fields, num, constant_number=0):
     return solve(even_extend_Matrix), solve(odd_extend_Matrix), real_kzas
 
 
-def singleboundry(real_fields, imag_fields, num, constant_number=0):
+def singleboundary(real_fields, imag_fields, num, constant_number=0):
     """
-    For the mix mode(both E and H mode)
+    compute the reflection coefficients on the single boundary(not the slab)
     
-    Paramters
+    Parameters
     ----------
-    :fields: a list of lenth 4, it contains incident and
-        reflected fields with real kz and imag kz, respectively.
-    :nne: negative diffraction oders
-    :npo: positive diffraction oders
-    :constant_number: the serial number of columm which is 
+    real_fields: list[FieldInPhCS]
+        the fields from eigenstates with real kz
+    imag_fields: list[FieldInPhCS]
+        the fields from eigenstates with imaginary kz
+    num: EssentialNumber
+    constant_number: int, optional
+        the serial number of columm of extend matricx which represents
         constant in eqs.
-    :return: the coefficents of different eigenstates in two
-        kinds(even or odd for E mode)
+    
+    Returns
+    -------
+    list[float]
+        ratio of coefficients of two Bloch waves in opposite
+        direction(the tangential compoments of E are even in z direction).
     """
     
     nd = num.d
