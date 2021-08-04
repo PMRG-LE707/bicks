@@ -187,40 +187,37 @@ For the single mode(only E or H mode)
 
 
 
-### bicks.boundryconditionwithcTIR.singleboundry(real_fields, imag_fields, num, constant_number=0)
-For the mix mode(both E and H mode)
+### bicks.boundryconditionwithcTIR.singleboundary(real_fields, imag_fields, num, constant_number=0)
+compute the reflection coefficients on the single boundary(not the slab)
 
 
-* **Fields**
+* **Parameters**
 
-    a list of lenth 4, it contains incident and
-    reflected fields with real kz and imag kz, respectively.
-
-
-
-* **Nne**
-
-    negative diffraction oders
+    
+    * **real_fields** (*list**[**FieldInPhCS**]*) – the fields from eigenstates with real kz
 
 
-
-* **Npo**
-
-    positive diffraction oders
+    * **imag_fields** (*list**[**FieldInPhCS**]*) – the fields from eigenstates with imaginary kz
 
 
+    * **num** (*EssentialNumber*) – 
 
-* **Constant_number**
 
-    the serial number of columm which is
+    * **constant_number** (*int**, **optional*) – the serial number of columm of extend matricx which represents
     constant in eqs.
 
 
 
 * **Returns**
 
-    the coefficents of different eigenstates in two
-    kinds(even or odd for E mode)
+    ratio of coefficients of two Bloch waves in opposite
+    direction(the tangential compoments of E are even in z direction).
+
+
+
+* **Return type**
+
+    list[float]
 
 
 ## bicks.crystalandnumber module
