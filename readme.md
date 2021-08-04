@@ -34,7 +34,7 @@ There are a lot examples in ``` ./docs/examples/``` which can help you quick-sta
 
 # Documentation
 
-See [here](https://bicks.readthedocs.io/en/latest/) to get help about classes and functions in bicks.
+See [here](https://bicksdoc.readthedocs.io/en/latest/) to get help about classes and functions in bicks.
 
 
 
