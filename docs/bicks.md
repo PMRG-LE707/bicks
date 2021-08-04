@@ -56,7 +56,6 @@ search BICs by varying thickness of PhC slab.
 
 * **Parameters**
 
-    
     * **hstart** (*float*) – start searching in this thickness
 
 
@@ -118,7 +117,7 @@ For the mix mode(both E and H mode)
 
 * **Parameters**
 
-    
+  
     * **real_fields** (*list**[**FieldInPhCS**]*) – the fields from eigenstates with real kz
 
 
@@ -135,7 +134,7 @@ For the mix mode(both E and H mode)
 
 * **Returns**
 
-    
+  
     * *list[float]* – the ratio of coefficients of two Bloch waves in opposite
     direction(the tangential compoments of E are even in z direction).
 
@@ -155,7 +154,7 @@ For the single mode(only E or H mode)
 
 * **Parameters**
 
-    
+  
     * **real_fields** (*list**[**FieldInPhCS**]*) – the fields from eigenstates with real kz
 
 
@@ -172,7 +171,7 @@ For the single mode(only E or H mode)
 
 * **Returns**
 
-    
+  
     * *list[float]* – ratio of coefficients of two Bloch waves in opposite
     direction(the tangential compoments of E are even in z direction).
 
@@ -393,7 +392,7 @@ mode: {“E”, “H”}, optional
 
 * **Returns**
 
-    
+  
     * *np.ndarray* – real k_parallels(eigenvalue) of eigenstates
 
 
@@ -434,7 +433,7 @@ mode: {“E”, “H”}, optional
 
 * **Returns**
 
-    
+  
     * *np.ndarray* – real k_parallels(eigenvalue) of eigenstates
 
 
@@ -540,7 +539,7 @@ Nq: int, optional
 
 * **Returns**
 
-    
+  
     * **k0_floor** (*np.ndarray*) – real k_parallels of eigenstates
 
 
