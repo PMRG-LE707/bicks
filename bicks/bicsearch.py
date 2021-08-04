@@ -10,14 +10,17 @@ import time
 class FindBICs:
     """find BICs in q-k0 space with single polarization.
     
-    Attributes
+    Parameters
     ----------
-    BIC_qs: list[list[float]]
-        each item contains BICs' qs for corresponding thickness.
-    BIC_k0s: list[list[float]]
-        each item contains BICs' k0s for corresponding thickness.
-    BIC_hs: list[float]
-        the thickness of PhC slab where BICs exist.
+    phcs: PhotonicCrystalSlab
+        the Photonic Crystal Slab which is a kind of class.
+    num: EssentialNumber
+    
+    mode: {"E", "H",}, optional
+        considered mode 
+    Nq: int, optional
+        number which we divided half of the Brillouin into
+    
     """
     def __init__(self, phcs, num, mode="E", Nq=250):
         """Initialize the class, create the gridding.
@@ -100,53 +103,7 @@ class FindBICs:
         else:
             raise ValueError("""mode should only be 'E' or 'H'
                              """)
-    
-    
-    def find_kpar(self, mode, Nq):
-        phcs = self.phcs
-        num = self.num
-        deltaq = 0.5/Nq
-        k0_floor, k0_ceiling, dataq, band_proj = \
-            find_band_projection(phcs, num, mode=mode, Nq=Nq)
-        datak0 = band_proj["k0a"]
-        kpara_real_range_origin = band_proj["real"]
-        kpara_imag_range_origin = band_proj["imag"]
-        
-        #gridding
-        real_k_parallel, imag_k_parallel, qk0 = [], [], []
-        
-        for i in range(len(dataq)):
-            qa = i * deltaq + dataq[0]
-            # this is the area in which Bloch waves' kz(real and image) will be found
-            kpara_real_range = []
-            kpara_imag_range = []
-            # this is the range of considered frequency 
-            k0_range = []
             
-            for j in range(len(datak0)):
-                datak0j = datak0[j]
-                if k0_floor[i] <= datak0j <= k0_ceiling[i]:
-                    k0_range.append(datak0j)
-                    kpara_real_range.append(
-                        kpara_real_range_origin[j])
-                    kpara_imag_range.append(
-                        kpara_imag_range_origin[j])
-            # compute the data     
-            for k in range(len(k0_range)):
-                k0a = k0_range[k]
-                kpara_real_extreme = kpara_real_range[k]
-                kpara_imag_extreme = kpara_imag_range[k]
-                tem_real_k_parallel, tem_imag_k_parallel = \
-                    find_eigen_kpar_in_an_area(phcs, qa*2*np.pi,
-                                               k0a*2*np.pi, num,
-                                               kpara_real_extreme,
-                                               kpara_imag_extreme,
-                                               mode=mode)
-                real_k_parallel.append(tem_real_k_parallel)
-                imag_k_parallel.append(tem_imag_k_parallel)
-                qk0.append([qa, k0a])     
-        return qk0, real_k_parallel, imag_k_parallel
-    
     
     def getcoeffs(self):
         """get the ratio of coefficients of two Bloch waves in opposite
@@ -328,6 +285,13 @@ class FindBICs:
         
 
     def showbic(self,i=0):
+        """show bics in the k-omega space for one particular h.
+        
+        Parameters
+        ----------
+        i: int, optional
+            the serial number of bic_hs
+        """
         h = self.bic_hs
         bic_q = self.bic_qs
         bic_k0 = self.bic_k0s
@@ -358,6 +322,13 @@ class FindBICs:
     
     
     def dynamicplot(self, save=False):
+        """show bics in the k-omega space with variant h.
+        
+        Parameters
+        ----------
+        save: str, optional
+            the path to save the dynamic picture.
+        """
         bic_h = self.bic_hs
         bic_q = self.bic_qs
         bic_k0 = self.bic_k0s
@@ -415,12 +386,18 @@ class FindBICs:
 class FindBICsMix:
     """find BICs in ky-k0 space with mix polarization.
     
-    Attributes
+    Parameters
     ----------
-    BIC_kys: list[float]
-        each item contains BICs' qs for corresponding thickness.
-    BIC_k0s: list[float]
-        each item contains BICs' k0s for corresponding thickness.
+    phcs: PhotonicCrystalSlab
+
+    num: EssentialNumber
+    
+    qa: float
+        the Bloch wave number, in unit 1/a
+    k0range: float, option
+        the length of the range of k0, in unit 1/a
+    Nk0: int, optional
+        the number which we divided the k0range
     """
     def __init__(self, phcs, num, qa, k0range=0.5*2*np.pi, Nk0=200):
         """Initialize the class, create the gridding.
@@ -709,6 +686,8 @@ class FindBICsMix:
         self.showbic()
     
     def showbic(self):
+        """show bics in the k-omega space.
+        """
         phcs = self.phcs
         qa = self.qa
         h = phcs.h
@@ -730,11 +709,6 @@ class FindBICsMix:
                         color='C1', alpha=0.3,
                         interpolate=True,
                         label="Searching range")
-        """
-        ax.fill_between(dataky, datak01, datak02,
-                        where=(datak01 < datak02),
-                        color='C1', alpha=0.3, interpolate=True)
-        """
         ax.scatter(bic_ky, bic_k0, marker='*',
                    s=100, c="red", edgecolors="black", 
                    label="BIC")

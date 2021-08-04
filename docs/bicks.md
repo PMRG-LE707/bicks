@@ -11,39 +11,31 @@ Bases: `object`
 find BICs in q-k0 space with single polarization.
 
 
-#### BIC_qs()
-each item contains BICs’ qs for corresponding thickness.
+* **Parameters**
+
+    
+    * **phcs** (*PhotonicCrystalSlab*) – the Photonic Crystal Slab which is a kind of class.
 
 
-* **Type**
-
-    list[list[float]]
+    * **num** (*EssentialNumber*) – 
 
 
-
-#### BIC_k0s()
-each item contains BICs’ k0s for corresponding thickness.
+    * **mode** (*{"E"**, **"H"**,**}**, **optional*) – considered mode
 
 
-* **Type**
-
-    list[list[float]]
-
-
-
-#### BIC_hs()
-the thickness of PhC slab where BICs exist.
-
-
-* **Type**
-
-    list[float]
+    * **Nq** (*int**, **optional*) – number which we divided half of the Brillouin into
 
 
 
 #### dynamicplot(save=False)
+show bics in the k-omega space with variant h.
 
-#### find_kpar(mode, Nq)
+
+* **Parameters**
+
+    **save** (*str**, **optional*) – the path to save the dynamic picture.
+
+
 
 #### getcoeffs()
 get the ratio of coefficients of two Bloch waves in opposite
@@ -56,6 +48,7 @@ search BICs by varying thickness of PhC slab.
 
 * **Parameters**
 
+    
     * **hstart** (*float*) – start searching in this thickness
 
 
@@ -70,6 +63,14 @@ search BICs by varying thickness of PhC slab.
 
 
 #### showbic(i=0)
+show bics in the k-omega space for one particular h.
+
+
+* **Parameters**
+
+    **i** (*int**, **optional*) – the serial number of bic_hs
+
+
 
 ### class bicks.bicsearch.FindBICsMix(phcs, num, qa, k0range=3.141592653589793, Nk0=200)
 Bases: `object`
@@ -77,23 +78,22 @@ Bases: `object`
 find BICs in ky-k0 space with mix polarization.
 
 
-#### BIC_kys()
-each item contains BICs’ qs for corresponding thickness.
+* **Parameters**
+
+    
+    * **phcs** (*PhotonicCrystalSlab*) – 
 
 
-* **Type**
-
-    list[float]
+    * **num** (*EssentialNumber*) – 
 
 
-
-#### BIC_k0s()
-each item contains BICs’ k0s for corresponding thickness.
+    * **qa** (*float*) – the Bloch wave number, in unit 1/a
 
 
-* **Type**
+    * **k0range** (*float**, **option*) – the length of the range of k0, in unit 1/a
 
-    list[float]
+
+    * **Nk0** (*int**, **optional*) – the number which we divided the k0range
 
 
 
@@ -108,6 +108,8 @@ get the BICs.
 
 
 #### showbic()
+show bics in the k-omega space.
+
 ## bicks.boundryconditionwithcTIR module
 
 
@@ -117,7 +119,7 @@ For the mix mode(both E and H mode)
 
 * **Parameters**
 
-  
+    
     * **real_fields** (*list**[**FieldInPhCS**]*) – the fields from eigenstates with real kz
 
 
@@ -134,7 +136,7 @@ For the mix mode(both E and H mode)
 
 * **Returns**
 
-  
+    
     * *list[float]* – the ratio of coefficients of two Bloch waves in opposite
     direction(the tangential compoments of E are even in z direction).
 
@@ -154,7 +156,7 @@ For the single mode(only E or H mode)
 
 * **Parameters**
 
-  
+    
     * **real_fields** (*list**[**FieldInPhCS**]*) – the fields from eigenstates with real kz
 
 
@@ -171,7 +173,7 @@ For the single mode(only E or H mode)
 
 * **Returns**
 
-  
+    
     * *list[float]* – ratio of coefficients of two Bloch waves in opposite
     direction(the tangential compoments of E are even in z direction).
 
@@ -392,7 +394,7 @@ mode: {“E”, “H”}, optional
 
 * **Returns**
 
-  
+    
     * *np.ndarray* – real k_parallels(eigenvalue) of eigenstates
 
 
@@ -433,7 +435,7 @@ mode: {“E”, “H”}, optional
 
 * **Returns**
 
-  
+    
     * *np.ndarray* – real k_parallels(eigenvalue) of eigenstates
 
 
@@ -539,7 +541,7 @@ Nq: int, optional
 
 * **Returns**
 
-  
+    
     * **k0_floor** (*np.ndarray*) – real k_parallels of eigenstates
 
 

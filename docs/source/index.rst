@@ -10,10 +10,6 @@ Welcome to bicks's documentation!
    :maxdepth: 3
    :caption: 目录:
    
-   introduction
-   quickstart
-   theory_manual
-   模块参数介绍 <bicks>
    
 
 
