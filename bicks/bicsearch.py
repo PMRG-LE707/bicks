@@ -85,9 +85,11 @@ class FindBICs:
                                                    kpara_real_extreme,
                                                    kpara_imag_extreme,
                                                    mode=mode)
-                    real_k_parallel.append(tem_real_k_parallel)
-                    imag_k_parallel.append(tem_imag_k_parallel)
-                    qk0.append([qa, k0a])
+                    if len(tem_real_k_parallel) == num.real:
+                        if len(tem_imag_k_parallel) == num.imag:
+                            real_k_parallel.append(tem_real_k_parallel)
+                            imag_k_parallel.append(tem_imag_k_parallel)
+                            qk0.append([qa, k0a])
                 if i%flagenum == 0:
                     iky = int(i/len(dataq)*50)+1
                     aii = "*" * iky
@@ -127,9 +129,11 @@ class FindBICs:
                                             real_k_parallel[i],
                                             imag_k_parallel[i],
                                             mode=self.mode)
+        
             odd_coefs.append(temfield.odd_coefs_inside)
             even_coefs.append(temfield.even_coefs_inside)
             kzas.append(temfield.realkzs)
+            
             if i%flagenum == 0:
                 iky = int(i/len(qk0)*50)+1
                 aii = "*" * iky
@@ -138,6 +142,8 @@ class FindBICs:
                 dur = time.time() - start
                 print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
                       end = "")      
+            
+            
         self.odd_coefs = np.array(odd_coefs)
         self.even_coefs = np.array(even_coefs)
         self.kzas = np.array(kzas)
