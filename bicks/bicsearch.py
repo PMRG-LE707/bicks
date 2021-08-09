@@ -90,14 +90,15 @@ class FindBICs:
                             real_k_parallel.append(tem_real_k_parallel)
                             imag_k_parallel.append(tem_imag_k_parallel)
                             qk0.append([qa, k0a])
-                if i%flagenum == 0:
-                    iky = int(i/len(dataq)*50)+1
-                    aii = "*" * iky
-                    bii = "." * (50 - iky)
-                    cii = iky / 50 * 100
-                    dur = time.time() - start
-                    print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
-                          end = "")      
+                if flagenum > 0:
+                    if i%flagenum == 0:
+                        iky = int(i/len(dataq)*50)+1
+                        aii = "*" * iky
+                        bii = "." * (50 - iky)
+                        cii = iky / 50 * 100
+                        dur = time.time() - start
+                        print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                              end = "")      
             print("\n" + "Initialization accomplished.")
             self.qk0 = qk0
             self.real_k_parallel = real_k_parallel
@@ -133,15 +134,15 @@ class FindBICs:
             odd_coefs.append(temfield.odd_coefs_inside)
             even_coefs.append(temfield.even_coefs_inside)
             kzas.append(temfield.realkzs)
-            
-            if i%flagenum == 0:
-                iky = int(i/len(qk0)*50)+1
-                aii = "*" * iky
-                bii = "." * (50 - iky)
-                cii = iky / 50 * 100
-                dur = time.time() - start
-                print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
-                      end = "")      
+            if flagenum > 0:
+                if i%flagenum == 0:
+                    iky = int(i/len(qk0)*50)+1
+                    aii = "*" * iky
+                    bii = "." * (50 - iky)
+                    cii = iky / 50 * 100
+                    dur = time.time() - start
+                    print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(cii,aii,bii,dur),
+                          end = "")      
             
             
         self.odd_coefs = np.array(odd_coefs)
